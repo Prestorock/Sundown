@@ -1,2 +1,11 @@
 # Sundown
-Sundown game for SGD
+Game for SGD 289 Project class.
+
+# Authors
+- Brain
+- Isaac
+- Mallik
+- Preston
+
+
+
