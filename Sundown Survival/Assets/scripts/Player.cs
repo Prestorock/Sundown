@@ -19,12 +19,16 @@ public class Player : MonoBehaviour
     #region Public Variables
     public int maxHealth = 100;
     public float speed = 0.1f;
+    public GameObject modelObject;
+    public GameObject bullet;
+    public GameObject gunAttach;
     #endregion
 
     #region Private Variables
     private int healthPoints;
     private GameObject targetObj = null;
-    private GameObject heldObj = null;
+    //TODO: make it so we can only ref the interactable script
+    public GameObject heldObj = null; // public for testing
     #endregion
 
     #region Unity Methods
@@ -38,7 +42,9 @@ public class Player : MonoBehaviour
     }
     void FixedUpdate()
     {
-        
+        //TODO: Implement targeting
+        //FindTarget();
+
         if (Input.GetKey(KeyCode.W))
         {
             this.transform.Translate(Vector3.forward * speed);
@@ -65,7 +71,9 @@ public class Player : MonoBehaviour
         {
             if (heldObj)
             {
-                if (heldObj.CompareTag("gun") == true || heldObj.CompareTag("melee") == true) //dont like tags, need something better
+                if (heldObj.CompareTag("gun") == true || heldObj.CompareTag("melee") == true) 
+                    //dont like tags 
+                    //TODO: implement an enum on interactable script
                 {
                     Attack(heldObj);
                 }
@@ -81,12 +89,21 @@ public class Player : MonoBehaviour
             }
             else
             {
-                Attack();
+                if (targetObj == null)
+                {
+                    Attack();
+                }
+                else
+                {
+                    //TODO: Create working interaction script
+                    //TODO: implement picking items up.
+                }
             }
         }
     }
     #endregion
 
+    #region Custom Methods
     /// <summary>
     /// If the held object is a gun, it shoots. If it is melee, it swings.
     /// </summary>
@@ -97,6 +114,7 @@ public class Player : MonoBehaviour
         if (weapon.CompareTag("gun") == true)
         {
             //TODO: implement guns
+            Instantiate(bullet, heldObj.transform.position, heldObj.transform.rotation);
         }
 
         if (weapon.CompareTag("melee") == true)
@@ -111,4 +129,5 @@ public class Player : MonoBehaviour
     {
         //TODO: implement punching
     }
+    #endregion
 }
