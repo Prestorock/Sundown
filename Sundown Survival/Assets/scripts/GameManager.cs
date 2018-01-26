@@ -12,25 +12,27 @@ Description:
 
 ===================================*/
 
-public class GameManager : MonoBehaviour 
+public class GameManager : MonoBehaviour
 {
     [HideInInspector]
-    public GameManager gm;
+    public static GameManager gm;
 
     #region Public Variables
     public GameObject floor;
     public Vector2 floorGridSize;
+    public GameObject pauseMenu;
 
     #endregion
 
     #region Private Variables
+    private bool paused = false;
     private GameObject[,] floorgrid;
     #endregion
 
     #region Unity Methods
     private void Awake()
     {
-        gm = this;   
+        gm = this;
     }
 
     private void Start()
@@ -40,13 +42,13 @@ public class GameManager : MonoBehaviour
         if (floor != null)
         {
             float floorsize = floor.GetComponent<Collider>().bounds.size.x;
-            print("Floor size: "+floorsize);
+            print("Floor size: " + floorsize);
             for (int i = 0; i < floorgrid.GetLength(0); i++)
             {
-                for(int j = 0; j < floorgrid.GetLength(1); j++)
+                for (int j = 0; j < floorgrid.GetLength(1); j++)
                 {
                     GameObject temp = Instantiate(floor, floor.transform.position, floor.transform.rotation);
-                    temp.transform.Translate(new Vector3(i*floorsize,floor.transform.position.y,j*floorsize));
+                    temp.transform.Translate(new Vector3(i * floorsize, floor.transform.position.y, j * floorsize));
                 }
             }
         }
@@ -54,6 +56,23 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Custom Methods
+    /// <summary>
+    /// TogglePause inverts bool paused and opens/closes menu while stopping/continuing time;
+    /// </summary>
+    public void TogglePause()
+    {
+        paused = !paused;
 
+        if(paused)
+        {
+            Time.timeScale = 0;
+            pauseMenu.SetActive(true);
+        }
+        else
+        {
+            Time.timeScale = 1;
+            pauseMenu.SetActive(false);
+        }
+    }
     #endregion
 }
