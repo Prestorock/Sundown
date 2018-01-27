@@ -294,6 +294,47 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 429255113}
+--- !u!1 &477680448
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 477680449}
+  - component: {fileID: 477680450}
+  m_Layer: 0
+  m_Name: interactTrigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &477680449
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 477680448}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.959}
+  m_LocalScale: {x: 1.4899925, y: 2.1805105, z: 1.3269873}
+  m_Children: []
+  m_Father: {fileID: 1798430266}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &477680450
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 477680448}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &487417020
 GameObject:
   m_ObjectHideFlags: 0
@@ -646,6 +687,7 @@ MonoBehaviour:
   smoothTime: 0.3
   heightBuffer: 15
   crosshair: {fileID: 822392465}
+  crosshairRadius: 5
   sensitivity: 50
 --- !u!1 &990437144
 GameObject:
@@ -854,6 +896,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1798430266 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4362235056224600, guid: d6c1c84a208e9dd40bdd6b3e73f2565e,
+    type: 2}
+  m_PrefabInternal: {fileID: 2001002533}
 --- !u!1 &1871372681
 GameObject:
   m_ObjectHideFlags: 0

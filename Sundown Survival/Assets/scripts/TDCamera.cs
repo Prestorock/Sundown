@@ -12,17 +12,20 @@ Description:
 
 ===================================*/
 
-public class TDCamera : MonoBehaviour 
+public class TDCamera : MonoBehaviour
 {
     #region Public Variables
     public Player target;
     [Tooltip("How far behind the camera follows the target.\n0 means no smoothing.")]
-    [Range(0.0f,0.5f)]
+    [Range(0.0f, 0.5f)]
     public float smoothTime = 0.1f;
     public float heightBuffer = 15;
     public GameObject crosshair;
+    [Tooltip("The max distance the crosshair gets from the player, this also affects the camera.")]
+    [Range(1, 7)]
+    public float crosshairRadius = 5;
 
-    
+
     #endregion
 
     #region Private Variables
@@ -46,27 +49,38 @@ public class TDCamera : MonoBehaviour
 
     private void Update()
     {
-        Vector3 wPos = Input.mousePosition;
-        wPos.z =(target.transform.position.z - Camera.main.transform.position.z) + heightBuffer * (float)sensitivity;
-        wPos = Camera.main.ScreenToWorldPoint(wPos);
-        Vector3 direction = wPos - target.transform.position;
+        if (Time.timeScale != 0)
+        {
+            //get the mouse cursor location
+            Vector3 wPos = Input.mousePosition;
+            //set a height buffer for perspective camera. The sensitivity isnt necessary but its too fast without it.
+            //also Input.mousePosition is a Vector2, so we set the z.
+            wPos.z = (target.transform.position.z - Camera.main.transform.position.z) + heightBuffer * (float)sensitivity;
+            //get the mouse cursor location from before, but set at the world position of the camera.
+            wPos = Camera.main.ScreenToWorldPoint(wPos);
+            Vector3 direction = wPos - target.transform.position;
 
-        float radius = 5;
-        direction = Vector3.ClampMagnitude(direction, radius);
+            direction = Vector3.ClampMagnitude(direction, crosshairRadius);
 
-        middlePosition = target.transform.position+direction;
+            middlePosition = target.transform.position + direction;
+        }
     }
 
     void LateUpdate()
     {
-        // Define a target position above the target transform
-        Vector3 targetPosition = new Vector3(middlePosition.x, target.transform.position.y + heightBuffer, middlePosition.z);
-        // Smoothly move the camera towards that target position
-        transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
 
-        crosshair.GetComponent<RectTransform>().anchoredPosition = Camera.main.WorldToScreenPoint(middlePosition);
-        middlePosition.y = target.transform.position.y;
-        target.modelObject.transform.LookAt(middlePosition);
+        if (Time.timeScale != 0)
+        {
+            // Define a target position above the target transform
+            Vector3 targetPosition = new Vector3(middlePosition.x, target.transform.position.y + heightBuffer, middlePosition.z);
+            // Smoothly move the camera towards that target position
+            transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
+
+            //move the gui crosshair over the middle area
+            crosshair.GetComponent<RectTransform>().anchoredPosition = Camera.main.WorldToScreenPoint(middlePosition);
+            middlePosition.y = target.transform.position.y;
+            target.modelObject.transform.LookAt(middlePosition);
+        }
     }
     #endregion
 

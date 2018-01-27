@@ -37,6 +37,10 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        Cursor.visible = false;
+
+        Cursor.lockState = CursorLockMode.Confined;
+
         Destroy(floor);
         floorgrid = new GameObject[(int)Mathf.Round(floorGridSize.x), (int)Mathf.Round(floorGridSize.y)];
         if (floor != null)
@@ -63,13 +67,17 @@ public class GameManager : MonoBehaviour
     {
         paused = !paused;
 
-        if(paused)
+        if (paused)
         {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
             Time.timeScale = 0;
             pauseMenu.SetActive(true);
         }
         else
         {
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = false;
             Time.timeScale = 1;
             pauseMenu.SetActive(false);
         }
