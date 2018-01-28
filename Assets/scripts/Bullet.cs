@@ -8,7 +8,8 @@ Developer:	Preston Rockholt Prockho0@email.cpcc.edu
 Company:	Sundown Studios
 Date:		23/01/2018 19:53
 -------------------------------------
-Description:
+Description: A bullet script. This should accept the damage from the weapon that fired it as a variable.
+            When spawned it flies straight on its z axis at "speed"
 
 ===================================*/
 
@@ -27,10 +28,16 @@ public class Bullet : MonoBehaviour
     {
         this.gameObject.GetComponent<TrailRenderer>().time = trail;
     }
-    void Start () {
-	}
-	
-	void Update () {
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.GetComponent<Weapon>() && !other.GetComponent<SelectionTarget>())
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
+    void Update () {
         transform.Translate(Vector3.forward*speed);
 	}
 	#endregion

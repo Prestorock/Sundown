@@ -8,7 +8,8 @@ Developer:	Preston Rockholt Prockho0@email.cpcc.edu
 Company:	Sundown Studios
 Date:		23/01/2018 05:44
 -------------------------------------
-Description:
+Description: A top down camera script. Follows the target Player object at a height of "heightBuffer".
+            Does so smoothly (affected by "smoothTime"). Also draws the crosshair at a clamped point.
 
 ===================================*/
 

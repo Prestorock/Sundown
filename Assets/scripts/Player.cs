@@ -8,8 +8,7 @@ Developer:	Preston Rockholt Prockho0@email.cpcc.edu
 Company:	Sundown Studios
 Date:		23/01/2018 05:18
 -------------------------------------
-Description:
-            A top down player controller. Should have capability to pick up items like ammo and supplies and to shoot a gun.
+Description: A top down player controller. Should have capability to pick up items like ammo and supplies and to shoot a gun.
             Base building may also become a possiblity so universal interaction should be the core idea.
 
 ===================================*/
@@ -22,13 +21,14 @@ public class Player : MonoBehaviour
     public GameObject modelObject;
     public GameObject bullet;
     public GameObject gunAttach;
+    public SelectionTarget SelectCollider;
     #endregion
 
     #region Private Variables
     private int healthPoints;
     private GameObject targetObj = null;
     //TODO: make it so we can only ref the interactable script 
-    public GameObject heldObj = null; // public for testing
+    private GameObject heldObj = null;
     #endregion
 
     #region Unity Methods
@@ -39,9 +39,14 @@ public class Player : MonoBehaviour
             GameManager.gm.TogglePause();
         }
 
-        //ANYTHING NOT IN THIS STATEMENT WILL NOT ADHERE TO PAUSING
         if (Time.timeScale != 0)
         {
+            /*********************************************************
+            ANYTHING NOT IN THIS STATEMENT WILL NOT ADHERE TO PAUSING
+            **********************************************************/
+
+
+
             if (Input.GetKey(KeyCode.W))
             {
                 this.transform.Translate(Vector3.forward * speed);
@@ -59,9 +64,27 @@ public class Player : MonoBehaviour
                 this.transform.Translate(Vector3.right * speed);
             }
 
-            if (Input.GetKey(KeyCode.F))
+            if (Input.GetKeyDown(KeyCode.F))
             {
-                //Interactions? Open doors? Take items? Switch guns?
+                if (!heldObj)
+                {
+                    if (SelectCollider.target != null)
+                    {
+                        heldObj = SelectCollider.target;
+                        heldObj.transform.parent = gunAttach.transform;
+                        heldObj.transform.localPosition = Vector3.zero;
+                        heldObj.transform.rotation = gunAttach.transform.rotation;
+                        heldObj.GetComponent<Rigidbody>().useGravity = false;
+                        heldObj.GetComponent<Rigidbody>().isKinematic = true;
+                    }
+                }
+                else
+                {
+                    heldObj.transform.parent = null;
+                    heldObj.GetComponent<Rigidbody>().useGravity = true;
+                    heldObj.GetComponent<Rigidbody>().isKinematic = false;
+                    heldObj = null;
+                }
             }
 
             if (Input.GetMouseButtonDown(0))
@@ -70,7 +93,7 @@ public class Player : MonoBehaviour
                 {
                     if (heldObj.CompareTag("gun") == true || heldObj.CompareTag("melee") == true) //if the object is a weapon
                     //dont like tags 
-                    //TODO: implement an enum on interactable script
+                    //TODO: implement an enum on interactable script once interactable script is made
                     {
                         Attack(heldObj);
                     }
@@ -104,25 +127,32 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Custom Methods
+    private void PickUp(GameObject target)
+    {
+
+    }
+
     /// <summary>
     /// If the held object is a gun, it shoots. If it is melee, it swings.
     /// </summary>
     /// <param name="weapon">The object the player is holding.</param>
-    /// 
+    ///
     private void Attack(GameObject weapon)
     {
-        if (weapon.CompareTag("gun") == true)
+        if (weapon)
         {
-            //TODO: implement guns
-            Instantiate(bullet, heldObj.transform.position, heldObj.transform.rotation);
-        }
+            if (weapon.CompareTag("gun") == true)
+            {
+                //TODO: implement guns
+                Instantiate(bullet, heldObj.transform.position, heldObj.transform.rotation);
+            }
 
-        else if (weapon.CompareTag("melee") == true)
-        {
-            //TODO implement melee
+            else if (weapon.CompareTag("melee") == true)
+            {
+                //TODO implement melee
+            }
         }
-
-        else if(weapon == null)
+        else 
         {
 
         }
