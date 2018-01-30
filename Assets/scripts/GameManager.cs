@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     public GameObject floorPrefab;
     public Vector2 floorGridSize;
     public GameObject pauseMenu;
+    public GameObject buildingMenu; //TODO: Implement building
     public GameObject playerObject;
 
     #endregion

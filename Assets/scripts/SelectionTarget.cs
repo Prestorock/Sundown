@@ -13,44 +13,83 @@ Description:
 
 ===================================*/
 
-    [RequireComponent(typeof(Outline))]
-public class SelectionTarget : MonoBehaviour 
+[RequireComponent(typeof(Outline))]
+public class SelectionTarget : MonoBehaviour
 {
     #region Public Variables
-    public GameObject target; 
-	#endregion
-	
-	#region Private Variables
-	#endregion
+    public GameObject HeldObj { get; private set; }
+    public GameObject Target { get; private set; }
+    #endregion
 
-	#region Unity Methods
-	void Start () {
-		
-	}
-	
-	void Update () {
-		
-	}
+    #region Private Variables
+
+    #endregion
+
+    #region Unity Methods
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<Interactable>())
+        if (other.gameObject.GetComponent<Interactable>() && other.gameObject != HeldObj)
         {
-            target = other.gameObject;
-            target.GetComponent<Outline>().enabled = true;
+            if (Target != null && other.gameObject != Target) //if theres a target, stop outlining OLD object
+            {
+                Target.GetComponent<Outline>().eraseRenderer = true;
+
+            }
+            Target = other.gameObject; // set new object as target
+            Target.GetComponent<Outline>().eraseRenderer = false; //outline new object
         }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.GetComponent<Interactable>() && other.gameObject != HeldObj)
+        {
+            if (Target == null)
+            {
+                Target = other.gameObject;
+                Target.GetComponent<Outline>().eraseRenderer = false;
+
+            }
+            else if (Target == other.gameObject)
+            {
+                Target.GetComponent<Outline>().eraseRenderer = false; //this might be unneccesary but it stops small cases of items not outlining
+            }
+        }
+        if (other.gameObject != Target && other.gameObject.GetComponent<Interactable>())
+        {
+            other.GetComponent<Outline>().eraseRenderer = true;
+        }
+
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.GetComponent<Interactable>())
         {
-            target.GetComponent<Outline>().enabled = false;
-            target = null;
+            other.GetComponent<Outline>().eraseRenderer = true;
+            Target = null;
         }
     }
     #endregion
 
     #region Custom Methods
+    public void SetHeldObject(GameObject h)
+    {
+        if (h == null)
+        {
+            HeldObj = null;
+        }
+        else
+        {
+            HeldObj = h;
+            Target = null;
+        }
+
+        if (HeldObj != null)
+        {
+            HeldObj.GetComponent<Outline>().eraseRenderer = true;
+        }
+    }
     #endregion
 }

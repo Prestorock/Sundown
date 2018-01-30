@@ -9,29 +9,27 @@ Developer:	Preston Rockholt Prockho0@email.cpcc.edu
 Company:	Sundown Studios
 Date:		28/01/2018 06:35
 -------------------------------------
-Description:
+Description:    This class is unconstructed. Basically just used as a tag for now but will eventually hold the objects information once the prototype is stable.
 
 ===================================*/
 
-
-public class Interactable : MonoBehaviour 
+[RequireComponent(typeof(Outline))]
+public class Interactable : MonoBehaviour
 {
-	#region Public Variables
-	#endregion
-	
-	#region Private Variables
-	#endregion
+    #region Public Variables
+    #endregion
 
-	#region Unity Methods
-	void Start () {
-		
-	}
-	
-	void Update () {
-		
-	}
-	#endregion
-	
-	#region Custom Methods
-	#endregion
+    #region Private Variables
+    //private Outline o;
+    #endregion
+
+    #region Unity Methods
+    private void Start()
+    {
+        //o = gameObject.GetComponent<Outline>();
+    }
+    #endregion
+
+    #region Custom Methods
+    #endregion
 }

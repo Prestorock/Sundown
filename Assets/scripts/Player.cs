@@ -21,14 +21,16 @@ public class Player : MonoBehaviour
     public GameObject modelObject;
     public GameObject bullet;
     public GameObject gunAttach;
+    public GameObject stashAttach;
     public SelectionTarget SelectCollider;
     #endregion
 
     #region Private Variables
     private int healthPoints;
     private GameObject targetObj = null;
-    //TODO: make it so we can only ref the interactable script 
+    //TODO: make it so we can only have to ref the interactable script for object info
     private GameObject heldObj = null;
+    private GameObject stashedWeapon = null;
     #endregion
 
     #region Unity Methods
@@ -44,7 +46,7 @@ public class Player : MonoBehaviour
             /*********************************************************
             ANYTHING NOT IN THIS STATEMENT WILL NOT ADHERE TO PAUSING
             **********************************************************/
-
+            targetObj = SelectCollider.Target;
 
 
             if (Input.GetKey(KeyCode.W))
@@ -64,26 +66,36 @@ public class Player : MonoBehaviour
                 this.transform.Translate(Vector3.right * speed);
             }
 
-            if (Input.GetKeyDown(KeyCode.F))
+            if (Input.GetKeyDown(KeyCode.Tab)) // swapping weapons
+            {
+                SwapWeapons();
+            }
+            if (Input.GetKeyDown(KeyCode.F)) //picking up and dropping weapons
             {
                 if (!heldObj)
                 {
-                    if (SelectCollider.target != null)
+                    if (targetObj != null) //No held obj with a target
                     {
-                        heldObj = SelectCollider.target;
-                        heldObj.transform.parent = gunAttach.transform;
-                        heldObj.transform.localPosition = Vector3.zero;
-                        heldObj.transform.rotation = gunAttach.transform.rotation;
-                        heldObj.GetComponent<Rigidbody>().useGravity = false;
-                        heldObj.GetComponent<Rigidbody>().isKinematic = true;
+                        PickUpItem(targetObj);
                     }
                 }
                 else
                 {
-                    heldObj.transform.parent = null;
-                    heldObj.GetComponent<Rigidbody>().useGravity = true;
-                    heldObj.GetComponent<Rigidbody>().isKinematic = false;
-                    heldObj = null;
+                    if (targetObj != null)
+                    {
+                        if (stashedWeapon)//Held obj, a target, and a stashed weapon
+                        {
+                            DropItem(heldObj);
+                        }
+                        else//Held obj, a target, and no stashed weapon
+                        {
+                            PickUpItem(targetObj);
+                        }
+                    }
+                    else//Held obj, no target
+                    {
+                        DropItem(heldObj);
+                    }
                 }
             }
 
@@ -92,21 +104,9 @@ public class Player : MonoBehaviour
                 if (heldObj) //if holding an object
                 {
                     if (heldObj.CompareTag("gun") == true || heldObj.CompareTag("melee") == true) //if the object is a weapon
-                    //dont like tags 
-                    //TODO: implement an enum on interactable script once interactable script is made
+                    //TODO: implement an enum on weapon script once interactable script is made to remove tags
                     {
                         Attack(heldObj);
-                    }
-                    else //if the object is a placable object
-                    {
-                        //TODO: implement building/interaction
-
-                        //if(heldObj == building)
-                        //Build(heldobj);
-
-                        //if holding an item and clicking on a target
-                        //if(targetting interactable)
-                        //InteractWithObject(targetObj, heldObj);
                     }
                 }
                 else //if not holding an item
@@ -115,11 +115,6 @@ public class Player : MonoBehaviour
                     {
                         Attack(null);
                     }
-                    else // no item but something is being targetted
-                    {
-                        //TODO: Create working interaction script
-                        //TODO: implement picking items up.
-                    }
                 }
             }
         }
@@ -127,9 +122,91 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Custom Methods
-    private void PickUp(GameObject target)
+    /// <summary>
+    /// Picks up target item. If an item is held, it puts the weapon in the holster and picks up the item.
+    /// </summary>
+    /// <param name="target"></param>
+    private void PickUpItem(GameObject target)
     {
+        if (heldObj)
+        {
+            if (heldObj.GetComponent<Weapon>() && stashedWeapon == null)
+            {
+                stashedWeapon = heldObj;
+                heldObj.transform.parent = stashAttach.transform;
+                heldObj.transform.position = stashAttach.transform.position;
+                heldObj.transform.rotation = stashAttach.transform.rotation;
+            }
+            else
+            {
+                return;
+            }
+        }
+            heldObj = target;
+            SelectCollider.SetHeldObject(heldObj);
+            heldObj.transform.parent = gunAttach.transform;
+            heldObj.transform.localPosition = Vector3.zero;
+            heldObj.transform.rotation = gunAttach.transform.rotation;
+            heldObj.GetComponent<Rigidbody>().useGravity = false;
+            heldObj.GetComponent<Rigidbody>().isKinematic = true;
+        
+    }
 
+    private void DropItem(GameObject item)
+    {
+        if (item == heldObj)
+        {
+            Rigidbody rb = heldObj.GetComponent<Rigidbody>();
+
+            heldObj.transform.parent = null;
+            rb.useGravity = true;
+            rb.isKinematic = false;
+            rb.AddRelativeForce(Vector3.forward*100);
+            SelectCollider.SetHeldObject(null);
+            heldObj = null;
+        }
+        else
+        {
+            //idk what else you'd drop yet but just in case.
+        }
+
+    }
+
+    /// <summary>
+    /// Swaps the heldObj with the stashedWeapon, if the stash if null then it picks the item up and puts the held in your stash.
+    /// </summary>
+    private void SwapWeapons()
+    {
+        if (stashedWeapon != null)
+        {
+            if (heldObj)
+            {
+                GameObject temp = stashedWeapon;
+                stashedWeapon = heldObj;
+                heldObj.transform.parent = stashAttach.transform;
+                heldObj.transform.position = stashAttach.transform.position;
+                heldObj.transform.rotation = stashAttach.transform.rotation;
+
+                heldObj = temp;
+                SelectCollider.SetHeldObject(heldObj);
+                heldObj.transform.parent = gunAttach.transform;
+                heldObj.transform.localPosition = Vector3.zero;
+                heldObj.transform.rotation = gunAttach.transform.rotation;
+                heldObj.GetComponent<Rigidbody>().useGravity = false;
+                heldObj.GetComponent<Rigidbody>().isKinematic = true;
+            }
+            else
+            {
+                heldObj = stashedWeapon;
+                stashedWeapon = null;
+                SelectCollider.SetHeldObject(heldObj);
+                heldObj.transform.parent = gunAttach.transform;
+                heldObj.transform.localPosition = Vector3.zero;
+                heldObj.transform.rotation = gunAttach.transform.rotation;
+                heldObj.GetComponent<Rigidbody>().useGravity = false;
+                heldObj.GetComponent<Rigidbody>().isKinematic = true;
+            }
+        }
     }
 
     /// <summary>
@@ -143,18 +220,17 @@ public class Player : MonoBehaviour
         {
             if (weapon.CompareTag("gun") == true)
             {
-                //TODO: implement guns
                 Instantiate(bullet, heldObj.transform.position, heldObj.transform.rotation);
             }
 
             else if (weapon.CompareTag("melee") == true)
             {
-                //TODO implement melee
+                //TODO: implement melee
             }
         }
-        else 
+        else
         {
-
+            //TODO: implement punching
         }
     }
     #endregion

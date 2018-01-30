@@ -6,6 +6,7 @@ TagManager:
   tags:
   - gun
   - melee
+  - floor
   layers:
   - Default
   - TransparentFX
