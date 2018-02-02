@@ -16,6 +16,7 @@ TODO: Make this script object oriented so we can customize weapons EZ (including
 public class Weapon : MonoBehaviour
 {
     #region Public Variables
+    public bool isHeld = false;
     public bool isGun = true;
     public int damage = 1;
     public float reloadTime = 1;
@@ -30,8 +31,22 @@ public class Weapon : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        Physics.IgnoreCollision(GetComponent<Collider>(), GameManager.gm.playerObject.GetComponent<Player>().modelObject.GetComponent<Collider>(), true);
+        Physics.IgnoreCollision(GetComponent<Collider>(), GameManager.gm.player.modelObject.GetComponent<Collider>(), true);
+        
     }
+    private void Update()
+    {
+        if (isHeld)
+        {
+            gameObject.GetComponent<Collider>().enabled = false;
+        }
+        else
+        {
+            gameObject.GetComponent<Collider>().enabled = true;
+
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (Time.timeScale != 0)

@@ -21,8 +21,8 @@ public class GameManager : MonoBehaviour
     public GameObject floorPrefab;
     public Vector2 floorGridSize;
     public GameObject pauseMenu;
-    public GameObject buildingMenu; //TODO: Implement building
-    public GameObject playerObject;
+    public GameObject buildingMenu;
+    public Player player;
 
     #endregion
 
@@ -68,6 +68,7 @@ public class GameManager : MonoBehaviour
     public void TogglePause()
     {
         paused = !paused;
+        buildingMenu.SetActive(false);
 
         if (paused)
         {
@@ -83,6 +84,15 @@ public class GameManager : MonoBehaviour
             Time.timeScale = 1;
             pauseMenu.SetActive(false);
         }
+    }
+    
+
+    public void ToggleBuildMenu()
+    {
+        player.canMove = (buildingMenu.activeInHierarchy);
+
+        Cursor.visible = !Cursor.visible;
+        buildingMenu.SetActive(!buildingMenu.activeInHierarchy);
     }
     #endregion
 }

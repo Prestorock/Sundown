@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 00f1bd3d8fb5d0844b29e2c06cd8b44b
+timeCreated: 1517571712
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - BuildingCheckMaterial: {fileID: 2100000, guid: 47e40c84faa4e9d4b8c044a894a2bea3,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

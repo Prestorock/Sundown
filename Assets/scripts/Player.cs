@@ -23,20 +23,24 @@ public class Player : MonoBehaviour
     public GameObject gunAttach;
     public GameObject stashAttach;
     public SelectionTarget SelectCollider;
+    public bool canMove = true;
     #endregion
 
     #region Private Variables
+    private TDCamera maincam;
     private int healthPoints;
     private GameObject targetObj = null;
     //TODO: make it so we can only have to ref the interactable script for object info
     private GameObject heldObj = null;
     private GameObject stashedWeapon = null;
+    private bool isBuilding = false;
+    private Building building;
     #endregion
 
     #region Unity Methods
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !isBuilding)
         {
             GameManager.gm.TogglePause();
         }
@@ -44,26 +48,76 @@ public class Player : MonoBehaviour
         if (Time.timeScale != 0)
         {
             /*********************************************************
-            ANYTHING NOT IN THIS STATEMENT WILL NOT ADHERE TO PAUSING
+            ANYTHING IN THIS STATEMENT WILL ADHERE TO PAUSING
             **********************************************************/
             targetObj = SelectCollider.Target;
 
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                GameManager.gm.ToggleBuildMenu();
+            }
 
-            if (Input.GetKey(KeyCode.W))
+            if (isBuilding)
             {
-                this.transform.Translate(Vector3.forward * speed);
+                if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.B))
+                {
+                    isBuilding = false;
+                    building = null;
+                }
+                RaycastHit hit;
+                Ray ray = Camera.main.ScreenPointToRay(Camera.main.WorldToScreenPoint(maincam.middlePosition));
+                if (Physics.Raycast(ray, out hit))
+                {
+                    if (hit.transform.GetComponent<BuildableFloor>())
+                    {
+                        BuildableFloor floor = hit.transform.GetComponent<BuildableFloor>();
+
+                        float closestdistance = Mathf.Infinity;
+                        GameObject closestObject = null;
+                        for (int i = 0; i < floor.attachPoints.GetLength(0); i++)
+                        {
+                            for (int j = 0; j < floor.attachPoints.GetLength(1); j++)
+                            {
+                                float distance = Vector3.Distance(hit.point, floor.attachPoints[i,j].transform.position);
+                                if (distance <= closestdistance) // or <=
+                                {
+                                    closestdistance = distance;
+                                    closestObject = floor.attachPoints[i, j].gameObject;
+                                }
+                                Debug.Log(closestObject.name);
+                            }
+                        }
+                        if (closestObject)
+                        {
+                            building.GiveBuildLocation(closestObject.transform.position);
+                        }
+                    }
+                    else
+                    {
+
+                    }
+
+                }
             }
-            if (Input.GetKey(KeyCode.S))
+
+            if (canMove)
             {
-                this.transform.Translate(Vector3.back * speed);
-            }
-            if (Input.GetKey(KeyCode.A))
-            {
-                this.transform.Translate(Vector3.left * speed);
-            }
-            if (Input.GetKey(KeyCode.D))
-            {
-                this.transform.Translate(Vector3.right * speed);
+                if (Input.GetKey(KeyCode.W))
+                {
+                    this.transform.Translate(Vector3.forward * speed);
+                }
+                if (Input.GetKey(KeyCode.S))
+                {
+                    this.transform.Translate(Vector3.back * speed);
+                }
+                if (Input.GetKey(KeyCode.A))
+                {
+                    this.transform.Translate(Vector3.left * speed);
+                }
+                if (Input.GetKey(KeyCode.D))
+                {
+                    this.transform.Translate(Vector3.right * speed);
+                }
             }
 
             if (Input.GetKeyDown(KeyCode.Tab)) // swapping weapons
@@ -101,27 +155,53 @@ public class Player : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                if (heldObj) //if holding an object
+                if (!isBuilding) //NOT BUILDING
                 {
-                    if (heldObj.CompareTag("gun") == true || heldObj.CompareTag("melee") == true) //if the object is a weapon
-                    //TODO: implement an enum on weapon script once interactable script is made to remove tags
+                    if (heldObj) //if holding an object
                     {
-                        Attack(heldObj);
+                        if (heldObj.CompareTag("gun") == true || heldObj.CompareTag("melee") == true) //if the object is a weapon
+                                                                                                      //TODO: implement an enum on weapon script once interactable script is made to remove tags
+                        {
+                            Attack(heldObj);
+                        }
+                    }
+                    else //if not holding an item
+                    {
+                        if (targetObj == null) //no item and nothing being targetted
+                        {
+                            Attack(null);
+                        }
                     }
                 }
-                else //if not holding an item
+                else //BUILDING
                 {
-                    if (targetObj == null) //no item and nothing being targetted
-                    {
-                        Attack(null);
-                    }
+                    PlaceBuilding(building);
                 }
             }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                if (isBuilding)
+                {
+                    isBuilding = false;
+                    Destroy(building.gameObject);
+                    building = null;
+                }
+            }
+            /****************************************************************
+             * NOTHING AFTER THIS ADHERES TO PAUSING
+             * **************************************************************/
         }
     }
     #endregion
 
     #region Custom Methods
+
+    public void SetCamera(TDCamera cam)
+    {
+        maincam = cam;
+    }
+
     /// <summary>
     /// Picks up target item. If an item is held, it puts the weapon in the holster and picks up the item.
     /// </summary>
@@ -142,14 +222,15 @@ public class Player : MonoBehaviour
                 return;
             }
         }
-            heldObj = target;
-            SelectCollider.SetHeldObject(heldObj);
-            heldObj.transform.parent = gunAttach.transform;
-            heldObj.transform.localPosition = Vector3.zero;
-            heldObj.transform.rotation = gunAttach.transform.rotation;
-            heldObj.GetComponent<Rigidbody>().useGravity = false;
-            heldObj.GetComponent<Rigidbody>().isKinematic = true;
-        
+        heldObj = target;
+        SelectCollider.SetHeldObject(heldObj);
+        heldObj.transform.parent = gunAttach.transform;
+        heldObj.transform.localPosition = Vector3.zero;
+        heldObj.transform.rotation = gunAttach.transform.rotation;
+        heldObj.GetComponent<Rigidbody>().useGravity = false;
+        heldObj.GetComponent<Rigidbody>().isKinematic = true;
+        heldObj.GetComponent<Weapon>().isHeld = true;
+
     }
 
     private void DropItem(GameObject item)
@@ -157,13 +238,15 @@ public class Player : MonoBehaviour
         if (item == heldObj)
         {
             Rigidbody rb = heldObj.GetComponent<Rigidbody>();
+            heldObj.GetComponent<Weapon>().isHeld = false;
 
             heldObj.transform.parent = null;
             rb.useGravity = true;
             rb.isKinematic = false;
-            rb.AddRelativeForce(Vector3.forward*100);
+            rb.AddRelativeForce(Vector3.forward * 100);
             SelectCollider.SetHeldObject(null);
             heldObj = null;
+
         }
         else
         {
@@ -173,7 +256,7 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// Swaps the heldObj with the stashedWeapon, if the stash if null then it picks the item up and puts the held in your stash.
+    /// Swaps the heldObj with the stashedWeapon, if the stash if null then it picks the target item up and puts the held in your stash.
     /// </summary>
     private void SwapWeapons()
     {
@@ -233,5 +316,31 @@ public class Player : MonoBehaviour
             //TODO: implement punching
         }
     }
+
+    private void PlaceBuilding(Building toBeBuilt)
+    {
+        Vector3 buildLocation = new Vector3(maincam.middlePosition.x, 0, maincam.middlePosition.z); //TODO: Dont rely on the y zero. bad practice.
+        if(building.Build() == true)
+        {
+            isBuilding = false;
+            building = null;
+        }
+        else
+        {
+
+        }
+
+    }
+    public void StartBuildPlacement(GameObject toBeBuilt)
+    {
+        isBuilding = true;
+        Vector3 buildLocation = new Vector3(maincam.middlePosition.x, 0, maincam.middlePosition.z); //TODO: Dont rely on the y zero. bad practice.
+        GameObject temp = Instantiate(toBeBuilt, buildLocation, toBeBuilt.transform.rotation);
+        building = temp.GetComponentInChildren<Building>();
+
+        GameManager.gm.ToggleBuildMenu();
+    }
+
     #endregion
+
 }

@@ -25,7 +25,8 @@ public class TDCamera : MonoBehaviour
     [Tooltip("The max distance the crosshair gets from the player, this also affects the camera.")]
     [Range(1, 7)]
     public float crosshairRadius = 5;
-
+    [HideInInspector]
+    public Vector3 middlePosition;
 
     #endregion
 
@@ -34,7 +35,6 @@ public class TDCamera : MonoBehaviour
     public Sens sensitivity;
 
     private Vector3 velocity = Vector3.zero;
-    private Vector3 middlePosition;
     #endregion
 
     #region Enumerations
@@ -48,6 +48,13 @@ public class TDCamera : MonoBehaviour
 
     #region Unity Methods
 
+    private void Start()
+    {
+        if(target)
+        {
+            target.SetCamera(this);
+        }
+    }
     private void Update()
     {
         if (Time.timeScale != 0)
