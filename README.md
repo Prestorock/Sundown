@@ -6,6 +6,6 @@ Game for SGD 289 Project class.
 - Isaac
 - Mallik
 - Preston
-
+- Ryan
 
 
