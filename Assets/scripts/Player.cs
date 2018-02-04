@@ -19,10 +19,11 @@ public class Player : MonoBehaviour
     public int maxHealth = 100;
     public float speed = 0.1f;
     public GameObject modelObject;
-    public GameObject bullet;
+    public GameObject bullet; //weapon should change bullets
     public GameObject gunAttach;
     public GameObject stashAttach;
     public SelectionTarget SelectCollider;
+    [HideInInspector]
     public bool canMove = true;
     #endregion
 
@@ -33,17 +34,14 @@ public class Player : MonoBehaviour
     //TODO: make it so we can only have to ref the interactable script for object info
     private GameObject heldObj = null;
     private GameObject stashedWeapon = null;
-    private bool isBuilding = false;
+    private bool buildingMode = false;
     private Building building;
     #endregion
 
     #region Unity Methods
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && !isBuilding)
-        {
-            GameManager.gm.TogglePause();
-        }
+        AntiPauseActions();
 
         if (Time.timeScale != 0)
         {
@@ -52,141 +50,12 @@ public class Player : MonoBehaviour
             **********************************************************/
             targetObj = SelectCollider.Target;
 
-            if (Input.GetKeyDown(KeyCode.B))
+            KeyboardInput();
+            MouseInput();
+
+            if (buildingMode)
             {
-                GameManager.gm.ToggleBuildMenu();
-            }
-
-            if (isBuilding)
-            {
-                if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.B))
-                {
-                    isBuilding = false;
-                    building = null;
-                }
-                RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(Camera.main.WorldToScreenPoint(maincam.middlePosition));
-                if (Physics.Raycast(ray, out hit))
-                {
-                    if (hit.transform.GetComponent<BuildableFloor>())
-                    {
-                        BuildableFloor floor = hit.transform.GetComponent<BuildableFloor>();
-
-                        float closestdistance = Mathf.Infinity;
-                        GameObject closestObject = null;
-                        for (int i = 0; i < floor.attachPoints.GetLength(0); i++)
-                        {
-                            for (int j = 0; j < floor.attachPoints.GetLength(1); j++)
-                            {
-                                float distance = Vector3.Distance(hit.point, floor.attachPoints[i,j].transform.position);
-                                if (distance <= closestdistance) // or <=
-                                {
-                                    closestdistance = distance;
-                                    closestObject = floor.attachPoints[i, j].gameObject;
-                                }
-                                Debug.Log(closestObject.name);
-                            }
-                        }
-                        if (closestObject)
-                        {
-                            building.GiveBuildLocation(closestObject.transform.position);
-                        }
-                    }
-                    else
-                    {
-
-                    }
-
-                }
-            }
-
-            if (canMove)
-            {
-                if (Input.GetKey(KeyCode.W))
-                {
-                    this.transform.Translate(Vector3.forward * speed);
-                }
-                if (Input.GetKey(KeyCode.S))
-                {
-                    this.transform.Translate(Vector3.back * speed);
-                }
-                if (Input.GetKey(KeyCode.A))
-                {
-                    this.transform.Translate(Vector3.left * speed);
-                }
-                if (Input.GetKey(KeyCode.D))
-                {
-                    this.transform.Translate(Vector3.right * speed);
-                }
-            }
-
-            if (Input.GetKeyDown(KeyCode.Tab)) // swapping weapons
-            {
-                SwapWeapons();
-            }
-            if (Input.GetKeyDown(KeyCode.F)) //picking up and dropping weapons
-            {
-                if (!heldObj)
-                {
-                    if (targetObj != null) //No held obj with a target
-                    {
-                        PickUpItem(targetObj);
-                    }
-                }
-                else
-                {
-                    if (targetObj != null)
-                    {
-                        if (stashedWeapon)//Held obj, a target, and a stashed weapon
-                        {
-                            DropItem(heldObj);
-                        }
-                        else//Held obj, a target, and no stashed weapon
-                        {
-                            PickUpItem(targetObj);
-                        }
-                    }
-                    else//Held obj, no target
-                    {
-                        DropItem(heldObj);
-                    }
-                }
-            }
-
-            if (Input.GetMouseButtonDown(0))
-            {
-                if (!isBuilding) //NOT BUILDING
-                {
-                    if (heldObj) //if holding an object
-                    {
-                        if (heldObj.CompareTag("gun") == true || heldObj.CompareTag("melee") == true) //if the object is a weapon
-                                                                                                      //TODO: implement an enum on weapon script once interactable script is made to remove tags
-                        {
-                            Attack(heldObj);
-                        }
-                    }
-                    else //if not holding an item
-                    {
-                        if (targetObj == null) //no item and nothing being targetted
-                        {
-                            Attack(null);
-                        }
-                    }
-                }
-                else //BUILDING
-                {
-                    PlaceBuilding(building);
-                }
-            }
-
-            if (Input.GetMouseButtonDown(1))
-            {
-                if (isBuilding)
-                {
-                    isBuilding = false;
-                    Destroy(building.gameObject);
-                    building = null;
-                }
+                BuildingMode();
             }
             /****************************************************************
              * NOTHING AFTER THIS ADHERES TO PAUSING
@@ -196,6 +65,160 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Custom Methods
+    private void AntiPauseActions()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) && !buildingMode)
+        {
+            GameManager.gm.TogglePause();
+        }
+    }
+
+    private void BuildingMode()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.B))
+        {
+            buildingMode = false;
+            building = null;
+        }
+
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Camera.main.WorldToScreenPoint(maincam.middlePosition));
+        if (Physics.Raycast(ray, out hit)) //NOTE: Building ray needs to ignore all layers but the floor and the player 
+                                            //(the player just stops from building on yourself. Not a bug, a feature. :D)
+        {
+            if (hit.transform.GetComponent<BuildableFloor>())
+            {
+                BuildableFloor floor = hit.transform.GetComponent<BuildableFloor>();
+
+                float closestdistance = Mathf.Infinity;
+                GameObject closestObject = null;
+                for (int i = 0; i < floor.attachPoints.GetLength(0); i++)
+                {
+                    for (int j = 0; j < floor.attachPoints.GetLength(1); j++)
+                    {
+                        float distance = Vector3.Distance(hit.point, floor.attachPoints[i, j].transform.position);
+                        if (distance <= closestdistance) // or <=
+                        {
+                            closestdistance = distance;
+                            closestObject = floor.attachPoints[i, j].gameObject;
+                        }
+                        Debug.Log(closestObject.name);
+                    }
+                }
+                if (closestObject)
+                {
+                    building.GiveBuildLocation(closestObject.transform.position);
+                }
+            }
+            else
+            {
+                //if the ray doesnt hit a floor
+            }
+
+        }
+    }
+
+    private void KeyboardInput()
+    {
+        if (canMove)
+        {
+            if (Input.GetKey(KeyCode.W))
+            {
+                this.transform.Translate(Vector3.forward * speed);
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                this.transform.Translate(Vector3.back * speed);
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                this.transform.Translate(Vector3.left * speed);
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                this.transform.Translate(Vector3.right * speed);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            GameManager.gm.ToggleBuildMenu();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab)) // swapping weapons
+        {
+            SwapWeapons();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F)) //picking up and dropping weapons
+        {
+            if (!heldObj)
+            {
+                if (targetObj != null) //No held obj with a target
+                {
+                    PickUpItem(targetObj);
+                }
+            }
+            else
+            {
+                if (targetObj != null)
+                {
+                    if (stashedWeapon)//Held obj, a target, and a stashed weapon
+                    {
+                        DropItem(heldObj);
+                    }
+                    else//Held obj, a target, and no stashed weapon
+                    {
+                        PickUpItem(targetObj);
+                    }
+                }
+                else//Held obj, no target
+                {
+                    DropItem(heldObj);
+                }
+            }
+        }
+
+    }
+
+    private void MouseInput()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (!buildingMode) //NOT BUILDING
+            {
+                if (heldObj) //if holding an object
+                {
+                    if (heldObj.CompareTag("gun") == true || heldObj.CompareTag("melee") == true) //if the object is a weapon
+                                                                                                  //TODO: implement an enum on weapon script once interactable script is made to remove tags
+                    {
+                        Attack(heldObj);
+                    }
+                }
+                else //if not holding an item
+                {
+                    if (targetObj == null) //no item and nothing being targetted
+                    {
+                        Attack(null);
+                    }
+                }
+            }
+            else //BUILDING
+            {
+                PlaceBuilding(building);
+            }
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (buildingMode)
+            {
+                buildingMode = false;
+                Destroy(building.gameObject);
+                building = null;
+            }
+        }
+    }
 
     public void SetCamera(TDCamera cam)
     {
@@ -320,20 +343,21 @@ public class Player : MonoBehaviour
     private void PlaceBuilding(Building toBeBuilt)
     {
         Vector3 buildLocation = new Vector3(maincam.middlePosition.x, 0, maincam.middlePosition.z); //TODO: Dont rely on the y zero. bad practice.
-        if(building.Build() == true)
+        if (building.Build() == true)
         {
-            isBuilding = false;
+            buildingMode = false;
             building = null;
         }
         else
         {
-
+            //TODO: Add failed build feedback?
         }
 
     }
+
     public void StartBuildPlacement(GameObject toBeBuilt)
     {
-        isBuilding = true;
+        buildingMode = true;
         Vector3 buildLocation = new Vector3(maincam.middlePosition.x, 0, maincam.middlePosition.z); //TODO: Dont rely on the y zero. bad practice.
         GameObject temp = Instantiate(toBeBuilt, buildLocation, toBeBuilt.transform.rotation);
         building = temp.GetComponentInChildren<Building>();

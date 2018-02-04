@@ -259,6 +259,7 @@ MonoBehaviour:
   gunAttach: {fileID: 1747226185515484}
   stashAttach: {fileID: 1032656257659238}
   SelectCollider: {fileID: 114363509008641944}
+  canMove: 1
 --- !u!136 &136535518461359372
 CapsuleCollider:
   m_ObjectHideFlags: 1
