@@ -23,12 +23,14 @@ public class GameManager : MonoBehaviour
     public GameObject pauseMenu;
     public GameObject buildingMenu;
     public Player player;
+    public enum Mode { Scavenge, Survive };
 
     #endregion
 
     #region Private Variables
     private bool paused = false;
     private GameObject[,] floorgrid;
+    private Mode GameMode = Mode.Scavenge;
     #endregion
 
     #region Unity Methods
@@ -39,10 +41,26 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        Cursor.visible = false;
 
+        Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
 
+        GameMode = Mode.Scavenge;
+
+        GenerateFloor();
+    }
+    #endregion
+
+    #region Custom Methods
+    public Mode GetGameMode()
+    {
+        return GameMode;
+    }
+    /// <summary>
+    /// Generates a floor and tiles it, based on the localscale of the object and the size defined by the user.
+    /// </summary>
+    private void GenerateFloor()
+    {
         floorgrid = new GameObject[(int)Mathf.Round(floorGridSize.x), (int)Mathf.Round(floorGridSize.y)];
         if (floorPrefab != null)
         {
@@ -59,9 +77,6 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    #endregion
-
-    #region Custom Methods
     /// <summary>
     /// TogglePause inverts bool paused and opens/closes menu while stopping/continuing time;
     /// </summary>
