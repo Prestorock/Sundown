@@ -18,19 +18,25 @@ public class GameManager : MonoBehaviour
     public static GameManager gm;
 
     #region Public Variables
-    public GameObject floorPrefab;
+    public GameObject buildFloor;
+    public GameObject noBuildFloor;
     public Vector2 floorGridSize;
     public GameObject pauseMenu;
     public GameObject buildingMenu;
     public Player player;
-    public enum Mode { Scavenge, Survive };
-
+    public GameObject powerups;
     #endregion
 
     #region Private Variables
     private bool paused = false;
     private GameObject[,] floorgrid;
     private Mode GameMode = Mode.Scavenge;
+    private float floorheight = 0; //comment out reference in GenerateFloor if we ever start changing this.
+    #endregion
+
+    #region Enumerators
+    public enum Mode { Scavenge, Survive };
+
     #endregion
 
     #region Unity Methods
@@ -41,17 +47,22 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
 
         GameMode = Mode.Scavenge;
 
         GenerateFloor();
+        //SpawnObjects();
+        SpawnPowerups();
     }
     #endregion
 
     #region Custom Methods
+    public float GetFloorHeight()
+    {
+        return floorheight;
+    }
     public Mode GetGameMode()
     {
         return GameMode;
@@ -61,20 +72,64 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void GenerateFloor()
     {
-        floorgrid = new GameObject[(int)Mathf.Round(floorGridSize.x), (int)Mathf.Round(floorGridSize.y)];
-        if (floorPrefab != null)
+        GameObject floorPrefab;
+        if (GameMode == Mode.Survive)
         {
-            float floorsize = 10 * floorPrefab.transform.localScale.x;
-            print("Floor size: " + floorsize);
-            for (int i = 0; i < floorgrid.GetLength(0); i++)
+            floorPrefab = buildFloor;
+
+            floorgrid = new GameObject[(int)Mathf.Round(floorGridSize.x), (int)Mathf.Round(floorGridSize.y)];
+            if (floorPrefab != null)
             {
-                for (int j = 0; j < floorgrid.GetLength(1); j++)
+                floorheight = floorPrefab.transform.position.y; //comment this out if we ever start manually changing the floor height
+
+                float floorsize = 10 * floorPrefab.transform.localScale.x;
+                print("Floor size: " + floorsize);
+                for (int i = 0; i < floorgrid.GetLength(0); i++)
                 {
-                    GameObject temp = Instantiate(floorPrefab, floorPrefab.transform.position, floorPrefab.transform.rotation);
-                    temp.name = ("floor" + i.ToString() + j.ToString());
-                    temp.transform.Translate(new Vector3(i * floorsize, this.transform.position.y, j * floorsize));
+                    for (int j = 0; j < floorgrid.GetLength(1); j++)
+                    {
+                        GameObject temp = Instantiate(floorPrefab, floorPrefab.transform.position, floorPrefab.transform.rotation);
+                        temp.name = ("floor" + i.ToString() + j.ToString());
+                        temp.transform.Translate(new Vector3(i * floorsize, floorheight, j * floorsize));
+                    }
                 }
             }
+        }
+        else if (GameMode == Mode.Scavenge)
+        {
+            floorPrefab = noBuildFloor;
+
+            floorgrid = new GameObject[(int)Mathf.Round(floorGridSize.x), (int)Mathf.Round(floorGridSize.y)];
+            if (floorPrefab != null)
+            {
+                floorheight = floorPrefab.transform.position.y; //comment this out if we ever start manually changing the floor height
+
+                float floorsize = 10 * floorPrefab.transform.localScale.x;
+                print("Floor size: " + floorsize);
+                for (int i = 0; i < floorgrid.GetLength(0); i++)
+                {
+                    for (int j = 0; j < floorgrid.GetLength(1); j++)
+                    {
+                        GameObject temp = Instantiate(floorPrefab, floorPrefab.transform.position, floorPrefab.transform.rotation);
+                        temp.name = ("floor" + i.ToString() + j.ToString());
+                        temp.transform.Translate(new Vector3(i * floorsize, floorheight, j * floorsize));
+                    }
+                }
+            }
+        }
+        
+    }
+    private void SpawnPowerups()
+    {
+        int r = Random.Range(1, 100);
+        Debug.Log("Powerups Spawned: " + r);
+        for(int i = 0; i < r; i++)
+        {
+            GameObject temp = Instantiate(powerups);
+            temp.transform.position = new Vector3(Random.Range(0, floorGridSize.x*10)-5, 
+                                                    floorheight + .5f, 
+                                                    Random.Range(0, floorGridSize.y*10)-5
+                                                    );
         }
     }
     /// <summary>

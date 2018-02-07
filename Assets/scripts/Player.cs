@@ -36,6 +36,9 @@ public class Player : MonoBehaviour
     private GameObject stashedWeapon = null;
     private bool buildingMode = false;
     private Building building;
+
+    public int ammo { get; private set; }
+    public int supplies { get; private set; }
     #endregion
 
     #region Unity Methods
@@ -65,6 +68,14 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Custom Methods
+    public void AlterAmmo(int amount)
+    {
+        ammo += amount;
+    }
+    public void AlterSupplies(int amount)
+    {
+        supplies += amount;
+    }
     private void AntiPauseActions()
     {
         if (Input.GetKeyDown(KeyCode.Escape) && !buildingMode)
