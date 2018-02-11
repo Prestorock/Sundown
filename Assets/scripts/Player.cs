@@ -36,6 +36,9 @@ public class Player : MonoBehaviour
     private GameObject stashedWeapon = null;
     private bool buildingMode = false;
     private Building building;
+
+    public int ammo { get; private set; }
+    public int supplies { get; private set; }
     #endregion
 
     #region Unity Methods
@@ -65,6 +68,14 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Custom Methods
+    public void AlterAmmo(int amount)
+    {
+        ammo += amount;
+    }
+    public void AlterSupplies(int amount)
+    {
+        supplies += amount;
+    }
     private void AntiPauseActions()
     {
         if (Input.GetKeyDown(KeyCode.Escape) && !buildingMode)
@@ -140,7 +151,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown(KeyCode.B) && GameManager.gm.GetGameMode() == GameManager.Mode.Survive)
         {
             GameManager.gm.ToggleBuildMenu();
         }
@@ -250,8 +261,8 @@ public class Player : MonoBehaviour
         heldObj.transform.parent = gunAttach.transform;
         heldObj.transform.localPosition = Vector3.zero;
         heldObj.transform.rotation = gunAttach.transform.rotation;
-        heldObj.GetComponent<Rigidbody>().useGravity = false;
-        heldObj.GetComponent<Rigidbody>().isKinematic = true;
+        heldObj.GetComponentInParent<Rigidbody>().useGravity = false;
+        heldObj.GetComponentInParent<Rigidbody>().isKinematic = true;
         heldObj.GetComponent<Weapon>().isHeld = true;
 
     }
@@ -260,7 +271,7 @@ public class Player : MonoBehaviour
     {
         if (item == heldObj)
         {
-            Rigidbody rb = heldObj.GetComponent<Rigidbody>();
+            Rigidbody rb = heldObj.GetComponentInParent<Rigidbody>();
             heldObj.GetComponent<Weapon>().isHeld = false;
 
             heldObj.transform.parent = null;
@@ -298,8 +309,8 @@ public class Player : MonoBehaviour
                 heldObj.transform.parent = gunAttach.transform;
                 heldObj.transform.localPosition = Vector3.zero;
                 heldObj.transform.rotation = gunAttach.transform.rotation;
-                heldObj.GetComponent<Rigidbody>().useGravity = false;
-                heldObj.GetComponent<Rigidbody>().isKinematic = true;
+                heldObj.GetComponentInParent<Rigidbody>().useGravity = false;
+                heldObj.GetComponentInParent<Rigidbody>().isKinematic = true;
             }
             else
             {
@@ -309,8 +320,8 @@ public class Player : MonoBehaviour
                 heldObj.transform.parent = gunAttach.transform;
                 heldObj.transform.localPosition = Vector3.zero;
                 heldObj.transform.rotation = gunAttach.transform.rotation;
-                heldObj.GetComponent<Rigidbody>().useGravity = false;
-                heldObj.GetComponent<Rigidbody>().isKinematic = true;
+                heldObj.GetComponentInParent<Rigidbody>().useGravity = false;
+                heldObj.GetComponentInParent<Rigidbody>().isKinematic = true;
             }
         }
     }
@@ -342,7 +353,7 @@ public class Player : MonoBehaviour
 
     private void PlaceBuilding(Building toBeBuilt)
     {
-        Vector3 buildLocation = new Vector3(maincam.middlePosition.x, 0, maincam.middlePosition.z); //TODO: Dont rely on the y zero. bad practice.
+        Vector3 buildLocation = new Vector3(maincam.middlePosition.x, GameManager.gm.GetFloorHeight(), maincam.middlePosition.z);
         if (building.Build() == true)
         {
             buildingMode = false;
@@ -358,7 +369,7 @@ public class Player : MonoBehaviour
     public void StartBuildPlacement(GameObject toBeBuilt)
     {
         buildingMode = true;
-        Vector3 buildLocation = new Vector3(maincam.middlePosition.x, 0, maincam.middlePosition.z); //TODO: Dont rely on the y zero. bad practice.
+        Vector3 buildLocation = new Vector3(maincam.middlePosition.x, GameManager.gm.GetFloorHeight(), maincam.middlePosition.z);
         GameObject temp = Instantiate(toBeBuilt, buildLocation, toBeBuilt.transform.rotation);
         building = temp.GetComponentInChildren<Building>();
 
