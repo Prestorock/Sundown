@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class cubespin : MonoBehaviour {
+public class AutoSpin : MonoBehaviour {
 
     public float spinSpeed;
     public enum Type { NONE, Left, Right, Tumble};
