@@ -309,8 +309,8 @@ public class Player : MonoBehaviour
                 heldObj.transform.parent = gunAttach.transform;
                 heldObj.transform.localPosition = Vector3.zero;
                 heldObj.transform.rotation = gunAttach.transform.rotation;
-                heldObj.GetComponent<Rigidbody>().useGravity = false;
-                heldObj.GetComponent<Rigidbody>().isKinematic = true;
+                heldObj.GetComponentInParent<Rigidbody>().useGravity = false;
+                heldObj.GetComponentInParent<Rigidbody>().isKinematic = true;
             }
             else
             {
@@ -320,8 +320,8 @@ public class Player : MonoBehaviour
                 heldObj.transform.parent = gunAttach.transform;
                 heldObj.transform.localPosition = Vector3.zero;
                 heldObj.transform.rotation = gunAttach.transform.rotation;
-                heldObj.GetComponent<Rigidbody>().useGravity = false;
-                heldObj.GetComponent<Rigidbody>().isKinematic = true;
+                heldObj.GetComponentInParent<Rigidbody>().useGravity = false;
+                heldObj.GetComponentInParent<Rigidbody>().isKinematic = true;
             }
         }
     }
@@ -353,7 +353,7 @@ public class Player : MonoBehaviour
 
     private void PlaceBuilding(Building toBeBuilt)
     {
-        Vector3 buildLocation = new Vector3(maincam.middlePosition.x, 0, maincam.middlePosition.z); //TODO: Dont rely on the y zero. bad practice.
+        Vector3 buildLocation = new Vector3(maincam.middlePosition.x, GameManager.gm.GetFloorHeight(), maincam.middlePosition.z);
         if (building.Build() == true)
         {
             buildingMode = false;
@@ -369,7 +369,7 @@ public class Player : MonoBehaviour
     public void StartBuildPlacement(GameObject toBeBuilt)
     {
         buildingMode = true;
-        Vector3 buildLocation = new Vector3(maincam.middlePosition.x, 0, maincam.middlePosition.z); //TODO: Dont rely on the y zero. bad practice.
+        Vector3 buildLocation = new Vector3(maincam.middlePosition.x, GameManager.gm.GetFloorHeight(), maincam.middlePosition.z);
         GameObject temp = Instantiate(toBeBuilt, buildLocation, toBeBuilt.transform.rotation);
         building = temp.GetComponentInChildren<Building>();
 

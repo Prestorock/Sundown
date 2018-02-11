@@ -28,14 +28,17 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Private Variables
+    private GameObject FloorParent;
     private bool paused = false;
     private GameObject[,] floorgrid;
+    [SerializeField]
     private Mode GameMode = Mode.Scavenge;
     private float floorheight = 0; //comment out reference in GenerateFloor if we ever start changing this.
+    private float modeTimer = 0f;
     #endregion
 
     #region Enumerators
-    public enum Mode { Scavenge, Survive };
+    public enum Mode { Scavenge, Survive, Dev };
 
     #endregion
 
@@ -47,18 +50,54 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        FloorParent = GameObject.Find("Floors");
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
+        if (GameMode != Mode.Dev) //development mode can be started by setting the mode from the gamemaster object
+            //this will stop the normal progression of the game like removing the floor and spawning objects;
+        {
+            GameMode = Mode.Scavenge;
+            GenerateFloor();
+            //SpawnObjects();
+            SpawnPowerups();
+        }
+    }
+    private void Update()
+    {
+        if (Time.timeScale != 0)
+        {
+            modeTimer += Time.deltaTime;
+        }
 
-        GameMode = Mode.Scavenge;
+        if(GameMode == Mode.Dev)
+        {
+            //Development test code here.
+        }
 
-        GenerateFloor();
-        //SpawnObjects();
-        SpawnPowerups();
+        //TODO: Find a good scavenge timer
+        if (modeTimer >= 60 && GameMode == Mode.Scavenge)
+        {
+            ChangeGameMode(Mode.Survive);
+        }
+        //TODO: Add Scavenge Mode when enemies are done;
+        /*
+        if(GameMode == Mode.Scavenge && ENEMIESAREDEAD)
+        {
+            GameMode = Mode.Scavenge;
+        }
+        */
     }
     #endregion
 
     #region Custom Methods
+    private void ChangeGameMode(Mode mode)
+    {
+        modeTimer = 0;
+        GameMode = mode;
+        DestroyFloor();
+        GenerateFloor();
+        //TODO: Cleanup on gamemode change
+    }
     public float GetFloorHeight()
     {
         return floorheight;
@@ -66,6 +105,15 @@ public class GameManager : MonoBehaviour
     public Mode GetGameMode()
     {
         return GameMode;
+    }
+    /// <summary>
+    /// EZ floor destruction. Throw away the parent and just make a new one. :)
+    /// </summary>
+    private void DestroyFloor()
+    {
+        Destroy(FloorParent);
+        FloorParent = new GameObject("Floors");
+        FloorParent.transform.parent = this.gameObject.transform;
     }
     /// <summary>
     /// Generates a floor and tiles it, based on the localscale of the object and the size defined by the user.
@@ -88,7 +136,7 @@ public class GameManager : MonoBehaviour
                 {
                     for (int j = 0; j < floorgrid.GetLength(1); j++)
                     {
-                        GameObject temp = Instantiate(floorPrefab, floorPrefab.transform.position, floorPrefab.transform.rotation);
+                        GameObject temp = Instantiate(floorPrefab, floorPrefab.transform.position, floorPrefab.transform.rotation, FloorParent.transform);
                         temp.name = ("floor" + i.ToString() + j.ToString());
                         temp.transform.Translate(new Vector3(i * floorsize, floorheight, j * floorsize));
                     }
@@ -110,25 +158,25 @@ public class GameManager : MonoBehaviour
                 {
                     for (int j = 0; j < floorgrid.GetLength(1); j++)
                     {
-                        GameObject temp = Instantiate(floorPrefab, floorPrefab.transform.position, floorPrefab.transform.rotation);
+                        GameObject temp = Instantiate(floorPrefab, floorPrefab.transform.position, floorPrefab.transform.rotation, FloorParent.transform);
                         temp.name = ("floor" + i.ToString() + j.ToString());
                         temp.transform.Translate(new Vector3(i * floorsize, floorheight, j * floorsize));
                     }
                 }
             }
         }
-        
+
     }
     private void SpawnPowerups()
     {
         int r = Random.Range(1, 100);
         Debug.Log("Powerups Spawned: " + r);
-        for(int i = 0; i < r; i++)
+        for (int i = 0; i < r; i++)
         {
             GameObject temp = Instantiate(powerups);
-            temp.transform.position = new Vector3(Random.Range(0, floorGridSize.x*10)-5, 
-                                                    floorheight + .5f, 
-                                                    Random.Range(0, floorGridSize.y*10)-5
+            temp.transform.position = new Vector3(Random.Range(0, floorGridSize.x * 10) - 5,
+                                                    floorheight + .5f,
+                                                    Random.Range(0, floorGridSize.y * 10) - 5
                                                     );
         }
     }
@@ -155,7 +203,7 @@ public class GameManager : MonoBehaviour
             pauseMenu.SetActive(false);
         }
     }
-    
+
 
     public void ToggleBuildMenu()
     {
