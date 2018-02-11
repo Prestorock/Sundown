@@ -261,8 +261,8 @@ public class Player : MonoBehaviour
         heldObj.transform.parent = gunAttach.transform;
         heldObj.transform.localPosition = Vector3.zero;
         heldObj.transform.rotation = gunAttach.transform.rotation;
-        heldObj.GetComponent<Rigidbody>().useGravity = false;
-        heldObj.GetComponent<Rigidbody>().isKinematic = true;
+        heldObj.GetComponentInParent<Rigidbody>().useGravity = false;
+        heldObj.GetComponentInParent<Rigidbody>().isKinematic = true;
         heldObj.GetComponent<Weapon>().isHeld = true;
 
     }
@@ -271,7 +271,7 @@ public class Player : MonoBehaviour
     {
         if (item == heldObj)
         {
-            Rigidbody rb = heldObj.GetComponent<Rigidbody>();
+            Rigidbody rb = heldObj.GetComponentInParent<Rigidbody>();
             heldObj.GetComponent<Weapon>().isHeld = false;
 
             heldObj.transform.parent = null;

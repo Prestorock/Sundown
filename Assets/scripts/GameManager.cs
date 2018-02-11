@@ -159,7 +159,7 @@ public class GameManager : MonoBehaviour
 
     public void ToggleBuildMenu()
     {
-        player.canMove = (buildingMenu.activeInHierarchy);
+        //player.canMove = (buildingMenu.activeInHierarchy);
 
         Cursor.visible = !Cursor.visible;
         buildingMenu.SetActive(!buildingMenu.activeInHierarchy);
