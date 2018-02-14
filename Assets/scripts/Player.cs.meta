@@ -1,11 +1,16 @@
 fileFormatVersion: 2
 guid: 31533319380d7214bb4bcc0557aefd6a
-timeCreated: 1516702700
+timeCreated: 1518602108
 licenseType: Free
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - modelObject: {instanceID: 0}
+  - bullet: {fileID: 1607220627184286, guid: 599eb76ccc27b7a4891a52f69be7d7c2, type: 2}
+  - gunAttach: {instanceID: 0}
+  - stashAttach: {instanceID: 0}
+  - SelectCollider: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

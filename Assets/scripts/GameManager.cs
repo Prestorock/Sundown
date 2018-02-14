@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
 
     #region Private Variables
     private GameObject FloorParent;
+    private GameObject PowerupParent;
     private bool paused = false;
     private GameObject[,] floorgrid;
     [SerializeField]
@@ -50,7 +51,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        FloorParent = GameObject.Find("Floors");
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
         if (GameMode != Mode.Dev) //development mode can be started by setting the mode from the gamemaster object
@@ -60,6 +60,12 @@ public class GameManager : MonoBehaviour
             GenerateFloor();
             //SpawnObjects();
             SpawnPowerups();
+        }
+        else
+        {
+            //development mode special code.
+            GenerateFloor();
+
         }
     }
     private void Update()
@@ -71,7 +77,8 @@ public class GameManager : MonoBehaviour
 
         if(GameMode == Mode.Dev)
         {
-            //Development test code here.
+            ChangeGameMode(Mode.Survive); //NOTE: Right now the Dev game mode starts the game in survival mode.
+
         }
 
         //TODO: Find a good scavenge timer
@@ -79,9 +86,9 @@ public class GameManager : MonoBehaviour
         {
             ChangeGameMode(Mode.Survive);
         }
-        //TODO: Add Scavenge Mode when enemies are done;
+        //TODO: Add Survival Mode when enemies are done;
         /*
-        if(GameMode == Mode.Scavenge && ENEMIESAREDEAD)
+        if(GameMode == Mode.Survival && ENEMIESAREDEAD)
         {
             GameMode = Mode.Scavenge;
         }
@@ -98,28 +105,30 @@ public class GameManager : MonoBehaviour
         GenerateFloor();
         //TODO: Cleanup on gamemode change
     }
-    public float GetFloorHeight()
-    {
-        return floorheight;
-    }
     public Mode GetGameMode()
     {
         return GameMode;
     }
+    public float GetFloorHeight()
+    {
+        return floorheight;
+    }
+
     /// <summary>
     /// EZ floor destruction. Throw away the parent and just make a new one. :)
     /// </summary>
     private void DestroyFloor()
     {
         Destroy(FloorParent);
-        FloorParent = new GameObject("Floors");
-        FloorParent.transform.parent = this.gameObject.transform;
     }
     /// <summary>
     /// Generates a floor and tiles it, based on the localscale of the object and the size defined by the user.
     /// </summary>
     private void GenerateFloor()
     {
+        FloorParent = new GameObject("Floors");
+        FloorParent.transform.parent = this.gameObject.transform;
+
         GameObject floorPrefab;
         if (GameMode == Mode.Survive)
         {
@@ -169,16 +178,23 @@ public class GameManager : MonoBehaviour
     }
     private void SpawnPowerups()
     {
+        PowerupParent = new GameObject("Powerups");
+        PowerupParent.transform.parent = this.gameObject.transform;
+
         int r = Random.Range(1, 100);
         Debug.Log("Powerups Spawned: " + r);
         for (int i = 0; i < r; i++)
         {
-            GameObject temp = Instantiate(powerups);
+            GameObject temp = Instantiate(powerups, PowerupParent.transform);
             temp.transform.position = new Vector3(Random.Range(0, floorGridSize.x * 10) - 5,
                                                     floorheight + .5f,
                                                     Random.Range(0, floorGridSize.y * 10) - 5
                                                     );
         }
+    }
+    private void CleanupObjects()
+    {
+        Destroy(PowerupParent);
     }
     /// <summary>
     /// TogglePause inverts bool paused and opens/closes menu while stopping/continuing time;
@@ -203,13 +219,12 @@ public class GameManager : MonoBehaviour
             pauseMenu.SetActive(false);
         }
     }
-
-
+    
     public void ToggleBuildMenu()
     {
         //player.canMove = (buildingMenu.activeInHierarchy);
 
-        Cursor.visible = !Cursor.visible;
+        Cursor.visible = !buildingMenu.activeInHierarchy;
         buildingMenu.SetActive(!buildingMenu.activeInHierarchy);
     }
     #endregion

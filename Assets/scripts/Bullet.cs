@@ -18,9 +18,11 @@ public class Bullet : MonoBehaviour
     #region Public Variables
     public float speed;
     public float trail;
+    public float lifetime = 10.0f;
     #endregion
 
     #region Private Variables
+    private float timer;
     #endregion
 
     #region Unity Methods
@@ -38,6 +40,12 @@ public class Bullet : MonoBehaviour
     }
 
     void Update () {
+        timer += Time.deltaTime;
+
+        if(timer >= lifetime)
+        {
+            Destroy(this.gameObject);
+        }
         transform.Translate(Vector3.forward*speed);
 	}
 	#endregion
