@@ -77,7 +77,8 @@ public class GameManager : MonoBehaviour
 
         if(GameMode == Mode.Dev)
         {
-            //Development test code here.
+            ChangeGameMode(Mode.Survive); //NOTE: Right now the Dev game mode starts the game in survival mode.
+
         }
 
         //TODO: Find a good scavenge timer
@@ -85,9 +86,9 @@ public class GameManager : MonoBehaviour
         {
             ChangeGameMode(Mode.Survive);
         }
-        //TODO: Add Scavenge Mode when enemies are done;
+        //TODO: Add Survival Mode when enemies are done;
         /*
-        if(GameMode == Mode.Scavenge && ENEMIESAREDEAD)
+        if(GameMode == Mode.Survival && ENEMIESAREDEAD)
         {
             GameMode = Mode.Scavenge;
         }
@@ -215,7 +216,7 @@ public class GameManager : MonoBehaviour
     {
         //player.canMove = (buildingMenu.activeInHierarchy);
 
-        Cursor.visible = !Cursor.visible;
+        Cursor.visible = !buildingMenu.activeInHierarchy;
         buildingMenu.SetActive(!buildingMenu.activeInHierarchy);
     }
     #endregion
