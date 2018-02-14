@@ -61,6 +61,12 @@ public class GameManager : MonoBehaviour
             //SpawnObjects();
             SpawnPowerups();
         }
+        else
+        {
+            //development mode special code.
+            GenerateFloor();
+
+        }
     }
     private void Update()
     {
