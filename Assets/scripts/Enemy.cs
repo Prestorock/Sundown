@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 /*===================================
 Project:	Sundown Survival	
@@ -14,23 +15,40 @@ Description:
 
 public class Enemy : MonoBehaviour 
 {
-	#region Public Variables
-	
-	#endregion
-	
-	#region Private Variables
-	
-	#endregion
-	
-	#region Enumerations
-	
-	#endregion
+    #region Public Variables
 
-	#region Unity Methods
-	
-	#endregion
-	
-	#region Custom Methods
-	
-	#endregion
+    #endregion
+
+    #region Private Variables
+    private NavMeshAgent agent;
+    #endregion
+
+    #region Enumerations
+
+    #endregion
+
+    #region Unity Methods
+    private void Start()
+    {
+        agent = GetComponent<NavMeshAgent>();
+
+    }
+    private void Update()
+    {
+        if (Vector3.Distance(GameManager.gm.player.transform.position, transform.position) > 2)
+        {
+            agent.SetDestination(GameManager.gm.player.transform.position);
+            agent.isStopped = false;
+        }
+        else
+        {
+            agent.isStopped = true;
+            //attack?
+        }
+    }
+    #endregion
+
+    #region Custom Methods
+
+    #endregion
 }

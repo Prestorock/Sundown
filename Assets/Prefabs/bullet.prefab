@@ -176,3 +176,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 1
   trail: 1
+  lifetime: 10

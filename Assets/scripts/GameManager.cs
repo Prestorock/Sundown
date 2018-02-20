@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 /*===================================
 Project:	Sundown Survival	
@@ -18,7 +19,7 @@ public class GameManager : MonoBehaviour
     public static GameManager gm;
 
     #region Public Variables
-    public GameObject buildFloor;
+    public GameObject[] buildFloor;
     public GameObject[] noBuildFloor;
     public Vector2 floorGridSize;
     public GameObject pauseMenu;
@@ -58,6 +59,7 @@ public class GameManager : MonoBehaviour
         {
             GameMode = Mode.Scavenge;
             GenerateFloor();
+            GenerateNavMesh();
             //SpawnObjects();
             SpawnPowerups();
         }
@@ -90,13 +92,18 @@ public class GameManager : MonoBehaviour
         /*
         if(GameMode == Mode.Survival && ENEMIESAREDEAD)
         {
-            GameMode = Mode.Scavenge;
+            ChangeGameMode(Mode.Scavenge);
         }
         */
     }
     #endregion
 
     #region Custom Methods
+
+    private void GenerateNavMesh()
+    {
+        floorgrid[0, 0].GetComponent<NavMeshSurface>().BuildNavMesh();
+    }
     private void ChangeGameMode(Mode mode)
     {
         modeTimer = 0;
@@ -132,22 +139,106 @@ public class GameManager : MonoBehaviour
         GameObject floorPrefab;
         if (GameMode == Mode.Survive)
         {
-            floorPrefab = buildFloor;
+            floorPrefab = buildFloor[0];
 
             floorgrid = new GameObject[(int)Mathf.Round(floorGridSize.x), (int)Mathf.Round(floorGridSize.y)];
             if (floorPrefab != null)
             {
-                floorheight = floorPrefab.transform.position.y; //comment this out if we ever start manually changing the floor height
+                floorheight = floorPrefab.transform.position.y; //NOTE: comment this out if we ever start manually changing the floor height
 
                 float floorsize = 10 * floorPrefab.transform.localScale.x;
                 print("Floor size: " + floorsize);
-                for (int i = 0; i < floorgrid.GetLength(0); i++)
+
+                int imax = floorgrid.GetLength(0);
+                int jmax = floorgrid.GetLength(1);
+
+                for (int i = 0; i < imax; i++)
                 {
-                    for (int j = 0; j < floorgrid.GetLength(1); j++)
+                    for (int j = 0; j < jmax; j++)
                     {
+                        //BORDERS
+                        if ((i == 0) || (i == imax - 1) || (j == 0) || (j == jmax - 1))
+                        {
+                            //CORNERS
+                            if (
+                                (i == 0 && j == 0) ||
+                                (i == imax - 1 && j == jmax - 1) ||
+                                (i == 0 && j == jmax - 1) ||
+                                (i == imax - 1 && j == 0)
+                                )
+                            {
+                                floorPrefab = buildFloor[2];
+                            }
+                            //WALLS
+                            else
+                            {
+                                floorPrefab = buildFloor[1];
+                            }
+                        }
+                        //CENTER
+                        else
+                        {
+                            floorPrefab = buildFloor[0];
+
+                        }
+
                         GameObject temp = Instantiate(floorPrefab, floorPrefab.transform.position, floorPrefab.transform.rotation, FloorParent.transform);
                         temp.name = ("floor" + i.ToString() + j.ToString());
+                        floorgrid[i, j] = temp;
+
+                        //TRANSLATION AND ROTATION
                         temp.transform.Translate(new Vector3(i * floorsize, floorheight, j * floorsize));
+
+                        //BORDERS
+                        if ((i == 0) || (i == imax - 1) || (j == 0) || (j == jmax - 1))
+                        {
+                            //CORNERS
+                            if (
+                                (i == 0 && j == 0) ||
+                                (i == imax - 1 && j == jmax - 1) ||
+                                (i == 0 && j == jmax - 1) ||
+                                (i == imax - 1 && j == 0)
+                                )
+                            {
+                                if (i == 0 && j == 0)
+                                {
+                                }
+                                else if ((i == imax - 1 && j == jmax - 1))
+                                {
+                                    temp.transform.Rotate(Vector3.up * 180);
+                                }
+                                else if (i == 0 && j == jmax - 1)
+                                {
+                                    temp.transform.Rotate(Vector3.up * 90);
+                                }
+                                else if (i == imax - 1 && j == 0)
+                                {
+                                    temp.transform.Rotate(Vector3.up * 270);
+
+                                }
+                            }
+                            //WALLS
+                            else
+                            {
+                                if (i == 0)
+                                {
+                                    temp.transform.Rotate(Vector3.up * 90);
+                                }
+                                else if (i == imax - 1)
+                                {
+
+                                    temp.transform.Rotate(Vector3.up * 270);
+                                }
+                                else if (j == 0)
+                                {
+                                }
+                                else if (j == jmax - 1)
+                                {
+                                    temp.transform.Rotate(Vector3.up * 180);
+
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -199,7 +290,7 @@ public class GameManager : MonoBehaviour
 
                         GameObject temp = Instantiate(floorPrefab, floorPrefab.transform.position, floorPrefab.transform.rotation, FloorParent.transform);
                         temp.name = ("floor" + i.ToString() + j.ToString());
-
+                        floorgrid[i, j] = temp;
                         //TRANSLATION AND ROTATION
                         temp.transform.Translate(new Vector3(i * floorsize, floorheight, j * floorsize));
 
@@ -251,6 +342,10 @@ public class GameManager : MonoBehaviour
                                     temp.transform.Rotate(Vector3.up * 180);
 
                                 }
+                            }
+                            if(i == imax-1 && j == jmax-1)
+                            {
+                                temp.GetComponent<NavMeshSurface>().BuildNavMesh();
                             }
                         }
                     }
