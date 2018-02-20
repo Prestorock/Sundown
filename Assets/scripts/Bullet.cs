@@ -23,6 +23,7 @@ public class Bullet : MonoBehaviour
 
     #region Private Variables
     private float timer;
+    private int damage = 1;
     #endregion
 
     #region Unity Methods
@@ -51,5 +52,9 @@ public class Bullet : MonoBehaviour
 	#endregion
 	
 	#region Custom Methods
+    public void SetDamage(int d)
+    {
+        damage = d;
+    }
 	#endregion
 }
