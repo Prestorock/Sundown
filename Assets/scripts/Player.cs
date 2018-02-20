@@ -25,6 +25,8 @@ public class Player : MonoBehaviour
     public SelectionTarget SelectCollider;
     [HideInInspector]
     public bool canMove = true;
+    [HideInInspector]
+    public bool canAttack = true;
     #endregion
 
     #region Private Variables
@@ -42,8 +44,17 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Unity Methods
+    private void Start()
+    {
+        healthPoints = maxHealth;
+    }
+
     private void Update()
     {
+        if(healthPoints <= 0)
+        {
+            Death();
+        }
         AntiPauseActions();
 
         if (Time.timeScale != 0)
@@ -68,6 +79,12 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Custom Methods
+    private void Death()
+    {
+        Debug.Log("Player Death");
+        canMove = false;
+        canAttack = false;
+    }
     public void AlterAmmo(int amount)
     {
         ammo += amount;
@@ -203,7 +220,10 @@ public class Player : MonoBehaviour
                     if (heldObj.CompareTag("gun") == true || heldObj.CompareTag("melee") == true) //if the object is a weapon
                                                                                                   //TODO: implement an enum on weapon script once interactable script is made to remove tags
                     {
-                        Attack(heldObj);
+                        if (canAttack)
+                        {
+                            Attack(heldObj);
+                        }
                     }
                 }
                 else //if not holding an item

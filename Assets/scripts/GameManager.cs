@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
 
     #region Public Variables
     public GameObject buildFloor;
-    public GameObject noBuildFloor;
+    public GameObject[] noBuildFloor;
     public Vector2 floorGridSize;
     public GameObject pauseMenu;
     public GameObject buildingMenu;
@@ -154,22 +154,105 @@ public class GameManager : MonoBehaviour
         }
         else if (GameMode == Mode.Scavenge)
         {
-            floorPrefab = noBuildFloor;
+            floorPrefab = noBuildFloor[0];
 
             floorgrid = new GameObject[(int)Mathf.Round(floorGridSize.x), (int)Mathf.Round(floorGridSize.y)];
             if (floorPrefab != null)
             {
-                floorheight = floorPrefab.transform.position.y; //comment this out if we ever start manually changing the floor height
+                floorheight = floorPrefab.transform.position.y; //NOTE: comment this out if we ever start manually changing the floor height
 
                 float floorsize = 10 * floorPrefab.transform.localScale.x;
                 print("Floor size: " + floorsize);
-                for (int i = 0; i < floorgrid.GetLength(0); i++)
+
+                int imax = floorgrid.GetLength(0); 
+                int jmax = floorgrid.GetLength(1);
+
+                for (int i = 0; i < imax; i++)
                 {
-                    for (int j = 0; j < floorgrid.GetLength(1); j++)
+                    for (int j = 0; j < jmax; j++)
                     {
+                        //BORDERS
+                        if ((i == 0 )|| (i == imax-1) || (j == 0) || (j == jmax-1))
+                        {
+                            //CORNERS
+                            if (
+                                (i == 0 && j == 0)  ||
+                                (i == imax-1 && j == jmax-1) ||
+                                (i == 0 && j == jmax-1) ||
+                                (i == imax-1 && j == 0)
+                                )
+                            {
+                                floorPrefab = noBuildFloor[2];
+                            }
+                            //WALLS
+                            else
+                            {
+                                floorPrefab = noBuildFloor[1];
+                            }
+                        }
+                        //CENTER
+                        else
+                        {
+                            floorPrefab = noBuildFloor[0];
+                            
+                        }
+
                         GameObject temp = Instantiate(floorPrefab, floorPrefab.transform.position, floorPrefab.transform.rotation, FloorParent.transform);
                         temp.name = ("floor" + i.ToString() + j.ToString());
+
+                        //TRANSLATION AND ROTATION
                         temp.transform.Translate(new Vector3(i * floorsize, floorheight, j * floorsize));
+
+                        //BORDERS
+                        if ((i == 0) || (i == imax - 1) || (j == 0) || (j == jmax - 1))
+                        {
+                            //CORNERS
+                            if (
+                                (i == 0 && j == 0) ||
+                                (i == imax - 1 && j == jmax - 1) ||
+                                (i == 0 && j == jmax - 1) ||
+                                (i == imax - 1 && j == 0)
+                                )
+                            {
+                                if (i == 0 && j == 0)
+                                {
+                                }
+                                else if ((i == imax - 1 && j == jmax - 1))
+                                {
+                                    temp.transform.Rotate(Vector3.up * 180);
+                                }
+                                else if (i == 0 && j == jmax - 1)
+                                {
+                                    temp.transform.Rotate(Vector3.up * 90);
+                                }
+                                else if (i == imax - 1 && j == 0)
+                                {
+                                    temp.transform.Rotate(Vector3.up * 270);
+
+                                }
+                            }
+                            //WALLS
+                            else
+                            {
+                                if (i == 0)
+                                {
+                                    temp.transform.Rotate(Vector3.up * 90);
+                                }
+                                else if ( i == imax -1)
+                                {
+
+                                    temp.transform.Rotate(Vector3.up * 270);
+                                }
+                                else if ( j == 0)
+                                {
+                                }
+                                else if (j == jmax-1)
+                                {
+                                    temp.transform.Rotate(Vector3.up * 180);
+
+                                }
+                            }
+                        }
                     }
                 }
             }
