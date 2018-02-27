@@ -75,8 +75,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1250122859320116}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -5, y: 0, z: -0.0634}
-  m_LocalScale: {x: 1.0204964, y: 1, z: 1}
+  m_LocalPosition: {x: -5, y: 3, z: 0}
+  m_LocalScale: {x: 10.34, y: 6.5179443, z: 1}
   m_Children: []
   m_Father: {fileID: 4672178269015378}
   m_RootOrder: 1
@@ -88,8 +88,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1592793741963154}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.04, y: 0, z: -5}
-  m_LocalScale: {x: 1.0193231, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 3, z: -5}
+  m_LocalScale: {x: 10.34, y: 6.5179443, z: 1}
   m_Children: []
   m_Father: {fileID: 4672178269015378}
   m_RootOrder: 0
@@ -123,7 +123,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100002, guid: 778016608c294ea45987744b61b1a7cb, type: 3}
+  - {fileID: 2100002, guid: ca47a1cfe6ebeb141a19e4a7685c0324, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -191,7 +191,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100002, guid: 778016608c294ea45987744b61b1a7cb, type: 3}
+  - {fileID: 2100002, guid: ca47a1cfe6ebeb141a19e4a7685c0324, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -217,7 +217,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1592793741963154}
-  m_Mesh: {fileID: 4300000, guid: 778016608c294ea45987744b61b1a7cb, type: 3}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!33 &33638684594493342
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -231,7 +231,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1250122859320116}
-  m_Mesh: {fileID: 4300000, guid: 778016608c294ea45987744b61b1a7cb, type: 3}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!65 &65041266634781528
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -242,8 +242,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 11.53623, y: 6.6106806, z: 2.178625}
-  m_Center: {x: 0.14083149, y: 3.3053403, z: -0.83931255}
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &65662591773312696
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -266,8 +266,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 11.089467, y: 6.6106806, z: 1.7914182}
-  m_Center: {x: -0.07490062, y: 3.3053403, z: -0.64570934}
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114054260812193464
 MonoBehaviour:
   m_ObjectHideFlags: 1
