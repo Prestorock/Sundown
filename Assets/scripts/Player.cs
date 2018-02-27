@@ -152,19 +152,19 @@ public class Player : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.W))
             {
-                this.transform.Translate(Vector3.forward * speed);
+                this.transform.Translate(Vector3.forward * speed *Time.deltaTime);
             }
             if (Input.GetKey(KeyCode.S))
             {
-                this.transform.Translate(Vector3.back * speed);
+                this.transform.Translate(Vector3.back * speed * Time.deltaTime);
             }
             if (Input.GetKey(KeyCode.A))
             {
-                this.transform.Translate(Vector3.left * speed);
+                this.transform.Translate(Vector3.left * speed * Time.deltaTime);
             }
             if (Input.GetKey(KeyCode.D))
             {
-                this.transform.Translate(Vector3.right * speed);
+                this.transform.Translate(Vector3.right * speed * Time.deltaTime);
             }
         }
 

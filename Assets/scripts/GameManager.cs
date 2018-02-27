@@ -110,6 +110,7 @@ public class GameManager : MonoBehaviour
         GameMode = mode;
         DestroyFloor();
         GenerateFloor();
+        GenerateNavMesh();
         //TODO: Cleanup on gamemode change
     }
     public Mode GetGameMode()
