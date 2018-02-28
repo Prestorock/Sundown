@@ -25,24 +25,31 @@ public class Weapon : MonoBehaviour
 
     #region Private Variables
     private Rigidbody rb;
+    private Collider col;
+    private bool colliding = true;
     #endregion
 
     #region Unity Methods
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        Physics.IgnoreCollision(GetComponent<Collider>(), GameManager.gm.player.modelObject.GetComponent<Collider>(), true);
-        
+        col = GetComponent<Collider>();
+        Physics.IgnoreCollision(col, GameManager.gm.player.modelObject.GetComponent<Collider>(), true);
+        colliding = col.enabled;
     }
     private void Update()
     {
-        if (isHeld)
+        if (isHeld && colliding == true)
         {
-            gameObject.GetComponent<Collider>().enabled = false;
+            GetComponent<AutoSpin>().enabled = false;
+            col.enabled = false;
+            colliding = false;
         }
-        else
+        else if (!isHeld && colliding == false)
         {
-            gameObject.GetComponent<Collider>().enabled = true;
+            GetComponent<AutoSpin>().enabled = true;
+            col.enabled = true;
+            colliding = true;
 
         }
     }

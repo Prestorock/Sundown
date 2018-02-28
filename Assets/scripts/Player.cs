@@ -48,6 +48,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         healthPoints = maxHealth;
+        maincam = Camera.main.GetComponent<TDCamera>();
     }
 
     private void Update()
@@ -87,6 +88,8 @@ public class Player : MonoBehaviour
         canMove = false;
         canAttack = false;
         isAlive = false;
+        maincam.fadeOut();
+        
     }
     public int GetHealth()
     {
@@ -137,7 +140,7 @@ public class Player : MonoBehaviour
                             closestdistance = distance;
                             closestObject = floor.attachPoints[i, j].gameObject;
                         }
-                        Debug.Log(closestObject.name);
+                        //Debug.Log(closestObject.name);
                     }
                 }
                 if (closestObject)
@@ -389,14 +392,15 @@ public class Player : MonoBehaviour
     private void PlaceBuilding(Building toBeBuilt)
     {
         Vector3 buildLocation = new Vector3(maincam.middlePosition.x, GameManager.gm.GetFloorHeight(), maincam.middlePosition.z);
-        if (building.Build() == true)
+        if (toBeBuilt.Build() == true)
         {
             buildingMode = false;
             building = null;
         }
         else
         {
-            //TODO: Add failed build feedback?
+            buildingMode = true;
+            building = toBeBuilt;
         }
 
     }

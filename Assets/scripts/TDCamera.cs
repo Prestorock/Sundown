@@ -28,6 +28,12 @@ public class TDCamera : MonoBehaviour
     [HideInInspector]
     public Vector3 middlePosition;
 
+    public Texture2D fadeOutTexture;
+    public float fadeSpeed = 0.3f;
+
+    public int fadeDrawDepth = -1000;
+    [HideInInspector]
+    public bool stillFading = false;
     #endregion
 
     #region Private Variables
@@ -35,6 +41,8 @@ public class TDCamera : MonoBehaviour
     public Sens sensitivity;
 
     private Vector3 velocity = Vector3.zero;
+    private float alpha = 1.0f;
+    private int fadeDir = -1;
     #endregion
 
     #region Enumerations
@@ -50,13 +58,38 @@ public class TDCamera : MonoBehaviour
 
     private void Start()
     {
-        if(target)
+        //target = GameManager.gm.player;
+        alpha = 1;
+        fadeIn();
+        if (target)
         {
             target.SetCamera(this);
         }
     }
+
+    private void OnGUI()
+    {
+        alpha += fadeDir * fadeSpeed * Time.deltaTime;
+        alpha = Mathf.Clamp01(alpha);
+
+        GUI.color = new Color(0,0,0,alpha);
+
+        GUI.depth = fadeDrawDepth;
+
+        GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), fadeOutTexture);
+
+        if ((alpha == 1 || alpha == 0) && stillFading == true)
+        {
+            stillFading = false;
+        }
+    }
+
     private void Update()
     {
+        if(target == null)
+        {
+            target = GameManager.gm.player;
+        }
         if (Time.timeScale != 0)
         {
             //get the mouse cursor location
@@ -114,5 +147,15 @@ public class TDCamera : MonoBehaviour
     #endregion
 
     #region Custom Methods
+    public void fadeOut()
+    {
+        stillFading = true;
+        fadeDir = 1;
+    }
+    public void fadeIn()
+    {
+        stillFading = true;
+        fadeDir = -1;
+    }
     #endregion
 }

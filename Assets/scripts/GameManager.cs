@@ -19,13 +19,19 @@ public class GameManager : MonoBehaviour
     public static GameManager gm;
 
     #region Public Variables
-    public GameObject[] buildFloor;
-    public GameObject[] noBuildFloor;
+    public GameObject playerPrefab;
+    public GameObject surviveSpawn;
+    public GameObject scavengeSpawn;
+    public GameObject buildFloor;
     public Vector2 floorGridSize;
     public GameObject pauseMenu;
     public GameObject buildingMenu;
-    public Player player;
     public GameObject powerups;
+    public GameObject storeObjectGroup;
+    public GameObject baseParent;
+    public float ScavengeSeconds = 60;
+    [HideInInspector]
+    public Player player;
     #endregion
 
     #region Private Variables
@@ -52,16 +58,13 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        player = SpawnPlayer();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
         if (GameMode != Mode.Dev) //development mode can be started by setting the mode from the gamemaster object
-            //this will stop the normal progression of the game like removing the floor and spawning objects;
+                                  //this will stop the normal progression of the game like removing the floor and spawning objects;
         {
-            GameMode = Mode.Scavenge;
-            GenerateFloor();
-            GenerateNavMesh();
-            //SpawnObjects();
-            SpawnPowerups();
+            StartCoroutine(ChangeGameMode(Mode.Scavenge));
         }
         else
         {
@@ -77,16 +80,18 @@ public class GameManager : MonoBehaviour
             modeTimer += Time.deltaTime;
         }
 
-        if(GameMode == Mode.Dev)
+        if (GameMode == Mode.Dev)
         {
-            ChangeGameMode(Mode.Survive); //NOTE: Right now the Dev game mode starts the game in survival mode.
+            StartCoroutine(ChangeGameMode(Mode.Survive));
+            //NOTE: Right now the Dev game mode starts the game in survival mode.
 
         }
 
         //TODO: Find a good scavenge timer
-        if (modeTimer >= 60 && GameMode == Mode.Scavenge)
+        if (modeTimer >= ScavengeSeconds && GameMode == Mode.Scavenge)
         {
-            ChangeGameMode(Mode.Survive);
+            StartCoroutine(ChangeGameMode(Mode.Survive));
+
         }
         //TODO: Add Survival Mode when enemies are done;
         /*
@@ -102,16 +107,45 @@ public class GameManager : MonoBehaviour
 
     private void GenerateNavMesh()
     {
-        floorgrid[0, 0].GetComponent<NavMeshSurface>().BuildNavMesh();
+        //floorgrid[0, 0].GetComponent<NavMeshSurface>().BuildNavMesh();
     }
-    private void ChangeGameMode(Mode mode)
+    IEnumerator ChangeGameMode(Mode mode)
     {
-        modeTimer = 0;
+        Camera.main.GetComponent<TDCamera>().fadeOut();
+
         GameMode = mode;
+        player.canMove = false;
+        player.canAttack = false;
+
+        while (Camera.main.GetComponent<TDCamera>().stillFading)
+        {
+            print("fading out");
+            yield return null;
+        }
+
+        Cleanup();
         DestroyFloor();
+        CollectPlayer();
+
+        Camera.main.GetComponent<TDCamera>().fadeIn();
+
         GenerateFloor();
         GenerateNavMesh();
-        //TODO: Cleanup on gamemode change
+        SpawnThings();
+        PlacePlayer();
+        Camera.main.GetComponent<TDCamera>().smoothTime = 0;
+        player.canMove = true;
+        player.canAttack = true;
+
+        while (Camera.main.GetComponent<TDCamera>().stillFading)
+        {
+            print("fading in");
+            yield return null;
+        }
+
+        Camera.main.GetComponent<TDCamera>().smoothTime = 0.2f;
+        modeTimer = 0;
+
     }
     public Mode GetGameMode()
     {
@@ -122,12 +156,46 @@ public class GameManager : MonoBehaviour
         return floorheight;
     }
 
+    private void CollectPlayer()
+    {
+        player.gameObject.SetActive(false);
+    }
+    private void PlacePlayer()
+    {
+        if (GameMode == Mode.Scavenge)
+        {
+            player.transform.position = scavengeSpawn.transform.position;
+        }
+        else if (GameMode == Mode.Survive)
+        {
+            player.transform.position = surviveSpawn.transform.position;
+
+        }
+        else
+        {
+            //dev mode placement
+            player.transform.position = surviveSpawn.transform.position;
+
+        }
+        player.gameObject.SetActive(true);
+
+    }
+
+    private Player SpawnPlayer()
+    {
+        GameObject playerObj = Instantiate(playerPrefab);
+        return playerObj.GetComponent<Player>();
+    }
+
     /// <summary>
     /// EZ floor destruction. Throw away the parent and just make a new one. :)
     /// </summary>
     private void DestroyFloor()
     {
-        Destroy(FloorParent);
+        if (FloorParent)
+        {
+            Destroy(FloorParent);
+        }
     }
     /// <summary>
     /// Generates a floor and tiles it, based on the localscale of the object and the size defined by the user.
@@ -135,17 +203,18 @@ public class GameManager : MonoBehaviour
     private void GenerateFloor()
     {
         FloorParent = new GameObject("Floors");
-        FloorParent.transform.parent = this.gameObject.transform;
+        FloorParent.transform.parent = baseParent.transform;
 
         GameObject floorPrefab;
         if (GameMode == Mode.Survive)
         {
-            floorPrefab = buildFloor[0];
+
+            floorPrefab = buildFloor;
 
             floorgrid = new GameObject[(int)Mathf.Round(floorGridSize.x), (int)Mathf.Round(floorGridSize.y)];
             if (floorPrefab != null)
             {
-                floorheight = floorPrefab.transform.position.y; //NOTE: comment this out if we ever start manually changing the floor height
+                floorheight = baseParent.transform.position.y; //NOTE: comment this out if we ever start manually changing the floor height
 
                 float floorsize = 10 * floorPrefab.transform.localScale.x;
                 print("Floor size: " + floorsize);
@@ -157,6 +226,7 @@ public class GameManager : MonoBehaviour
                 {
                     for (int j = 0; j < jmax; j++)
                     {
+                        /*
                         //BORDERS
                         if ((i == 0) || (i == imax - 1) || (j == 0) || (j == jmax - 1))
                         {
@@ -182,14 +252,15 @@ public class GameManager : MonoBehaviour
                             floorPrefab = buildFloor[0];
 
                         }
-
-                        GameObject temp = Instantiate(floorPrefab, floorPrefab.transform.position, floorPrefab.transform.rotation, FloorParent.transform);
+                        */
+                        GameObject temp = Instantiate(floorPrefab, baseParent.transform.position, baseParent.transform.rotation, FloorParent.transform);
                         temp.name = ("floor" + i.ToString() + j.ToString());
                         floorgrid[i, j] = temp;
 
                         //TRANSLATION AND ROTATION
                         temp.transform.Translate(new Vector3(i * floorsize, floorheight, j * floorsize));
 
+                        /*
                         //BORDERS
                         if ((i == 0) || (i == imax - 1) || (j == 0) || (j == jmax - 1))
                         {
@@ -240,12 +311,14 @@ public class GameManager : MonoBehaviour
                                 }
                             }
                         }
+                        */
                     }
                 }
             }
         }
         else if (GameMode == Mode.Scavenge)
         {
+            /*
             floorPrefab = noBuildFloor[0];
 
             floorgrid = new GameObject[(int)Mathf.Round(floorGridSize.x), (int)Mathf.Round(floorGridSize.y)];
@@ -352,28 +425,45 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
+        */
         }
 
     }
-    private void SpawnPowerups()
+    private void SpawnThings()
     {
         PowerupParent = new GameObject("Powerups");
         PowerupParent.transform.parent = this.gameObject.transform;
-
-        int r = Random.Range(1, 100);
-        Debug.Log("Powerups Spawned: " + r);
-        for (int i = 0; i < r; i++)
+        if (GameMode == Mode.Scavenge)
         {
-            GameObject temp = Instantiate(powerups, PowerupParent.transform);
-            temp.transform.position = new Vector3(Random.Range(0, floorGridSize.x * 10) - 5,
-                                                    floorheight + .5f,
-                                                    Random.Range(0, floorGridSize.y * 10) - 5
-                                                    );
+            storeObjectGroup.SetActive(true);
+            int r = Random.Range(1, 100);
+            Debug.Log("Powerups Spawned: " + r);
+            for (int i = 0; i < r; i++)
+            {
+                GameObject temp = Instantiate(powerups, PowerupParent.transform);
+                temp.transform.position = new Vector3(Random.Range(0, floorGridSize.x * 10) - 5,
+                                                        floorheight + .5f,
+                                                        Random.Range(0, floorGridSize.y * 10) - 5
+                                                        );
+            }
+        }
+        else if (GameMode == Mode.Survive)
+        {
+            baseParent.SetActive(true);
+
         }
     }
-    private void CleanupObjects()
+    private void Cleanup()
     {
         Destroy(PowerupParent);
+        if (GameMode == Mode.Survive)
+        {
+            storeObjectGroup.SetActive(false);
+        }
+        else if (GameMode == Mode.Scavenge)
+        {
+            baseParent.SetActive(false);
+        }
     }
     /// <summary>
     /// TogglePause inverts bool paused and opens/closes menu while stopping/continuing time;
@@ -398,7 +488,7 @@ public class GameManager : MonoBehaviour
             pauseMenu.SetActive(false);
         }
     }
-    
+
     public void ToggleBuildMenu()
     {
         //player.canMove = (buildingMenu.activeInHierarchy);

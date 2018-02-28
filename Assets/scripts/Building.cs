@@ -26,6 +26,7 @@ public class Building : MonoBehaviour
     private Vector3 indicatedLocation;
     private Outline oline;
     private Material mat;
+    private Color matColor;
     #endregion
 
     #region Unity Methods
@@ -35,6 +36,7 @@ public class Building : MonoBehaviour
         built = false;
         oline = GetComponent<Outline>();
         mat = GetComponent<Renderer>().material;
+        matColor = GetComponent<Renderer>().material.color;
         GetComponent<Renderer>().material = BuildingCheckMaterial;
         GetComponent<Collider>().isTrigger = true;
 
@@ -96,6 +98,8 @@ public class Building : MonoBehaviour
                 gameObject.GetComponent<Collider>().isTrigger = false;
             }
             GetComponent<Renderer>().material = mat;
+            GetComponent<Renderer>().material.color = matColor;
+            oline.eraseRenderer = true;
 
             return true;
         }
