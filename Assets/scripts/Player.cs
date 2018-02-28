@@ -55,6 +55,7 @@ public class Player : MonoBehaviour
         {
             Death();
         }
+
         AntiPauseActions();
 
         if (Time.timeScale != 0)
@@ -84,6 +85,10 @@ public class Player : MonoBehaviour
         Debug.Log("Player Death");
         canMove = false;
         canAttack = false;
+    }
+    public int GetHealth()
+    {
+        return healthPoints;
     }
     public void AlterAmmo(int amount)
     {
@@ -148,11 +153,19 @@ public class Player : MonoBehaviour
 
     private void KeyboardInput()
     {
+        if(Input.GetKeyDown(KeyCode.LeftBracket))
+        {
+            Mathf.Clamp(healthPoints -= 5, 0, 100);
+        }
+        else if (Input.GetKeyDown(KeyCode.RightBracket))
+        {
+            Mathf.Clamp(healthPoints += 5, 0, 100);
+        }
         if (canMove)
         {
             if (Input.GetKey(KeyCode.W))
             {
-                this.transform.Translate(Vector3.forward * speed *Time.deltaTime);
+                this.transform.Translate(Vector3.forward * speed * Time.deltaTime);
             }
             if (Input.GetKey(KeyCode.S))
             {

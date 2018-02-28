@@ -79,7 +79,7 @@ public class TDCamera : MonoBehaviour
 
         if (Time.timeScale != 0)
         {
-            // Define a target position above the target transform
+            // Define a target position relative to the target transform
             Vector3 targetPosition = new Vector3(middlePosition.x, target.transform.position.y + heightBuffer, middlePosition.z);
             // Smoothly move the camera towards that target position
             transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
