@@ -40,9 +40,9 @@ public class TDCamera : MonoBehaviour
     #region Enumerations
     public enum Sens
     {
-        low = 100,
-        medium = 50,
-        high = 1
+        low = 300,
+        medium = 150,
+        high = 50
     }
     #endregion
 
@@ -80,14 +80,35 @@ public class TDCamera : MonoBehaviour
         if (Time.timeScale != 0)
         {
             // Define a target position relative to the target transform
-            Vector3 targetPosition = new Vector3(middlePosition.x, target.transform.position.y + heightBuffer, middlePosition.z);
+            Vector3 targetPos = new Vector3(middlePosition.x, target.transform.position.y + heightBuffer, middlePosition.z);
+            Vector3 smoothPos = new Vector3(target.transform.position.x, target.transform.position.y + heightBuffer, target.transform.position.z);
+            float offset = (crosshairRadius / 2.0f) - 0.75f;
+            if (targetPos.x > target.transform.position.x + offset)
+            {
+                smoothPos.x += crosshairRadius;
+            }
+            else if (targetPos.x < target.transform.position.x - offset)
+            {
+                smoothPos.x -= crosshairRadius;
+            }
+            if (targetPos.z > target.transform.position.z + offset)
+            {
+                smoothPos.z += crosshairRadius;
+            }
+            else if (targetPos.z < target.transform.position.z - offset)
+            {
+                smoothPos.z -= crosshairRadius;
+            }
             // Smoothly move the camera towards that target position
-            transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
+            transform.position = Vector3.SmoothDamp(transform.position, smoothPos, ref velocity, smoothTime);
 
             //move the gui crosshair over the middle area
             crosshair.GetComponent<RectTransform>().anchoredPosition = Camera.main.WorldToScreenPoint(middlePosition);
             middlePosition.y = target.transform.position.y;
-            target.modelObject.transform.LookAt(middlePosition);
+            if (target.canMove)
+            {
+                target.modelObject.transform.LookAt(middlePosition);
+            }
         }
     }
     #endregion

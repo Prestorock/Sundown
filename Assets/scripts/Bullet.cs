@@ -36,6 +36,7 @@ public class Bullet : MonoBehaviour
     {
         if (!other.GetComponent<Weapon>() && !other.GetComponent<SelectionTarget>())
         {
+            print("Hit: " + other.gameObject.name);
             Destroy(this.gameObject);
         }
     }

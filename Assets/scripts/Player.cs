@@ -38,6 +38,7 @@ public class Player : MonoBehaviour
     private GameObject stashedWeapon = null;
     private bool buildingMode = false;
     private Building building;
+    private bool isAlive = true;
 
     public int ammo { get; private set; }
     public int supplies { get; private set; }
@@ -85,6 +86,7 @@ public class Player : MonoBehaviour
         Debug.Log("Player Death");
         canMove = false;
         canAttack = false;
+        isAlive = false;
     }
     public int GetHealth()
     {
