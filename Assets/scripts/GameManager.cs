@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Private Variables
-    private GameObject FloorParent;
+    private GameObject FloorParent = null;
     private GameObject PowerupParent;
     private bool paused = false;
     private GameObject[,] floorgrid;
@@ -202,10 +202,6 @@ public class GameManager : MonoBehaviour
     {
         if (gameFullyInitialized != true)
         {
-            if (FloorParent)
-            {
-                Destroy(FloorParent);
-            }
         }
         else
         {
@@ -217,7 +213,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void GenerateFloor()
     {
-        FloorParent = new GameObject("Floors");
+        if (FloorParent == null)
+        {
+            FloorParent = new GameObject("Floors");
+        }
         FloorParent.transform.parent = baseParent.transform;
 
         GameObject floorPrefab;
