@@ -22,8 +22,9 @@ public class Building : MonoBehaviour
 	
 	#region Private Variables
     private bool buildable;
-    public bool built;
-    private Vector3 indicatedLocation;
+    private bool built;
+    private Transform attachTo;
+    private BuildableFloor floor;
     private Outline oline;
     private Material mat;
     private Color matColor;
@@ -45,7 +46,14 @@ public class Building : MonoBehaviour
     void Update () {
         if (!built)
         {
-            transform.parent.position = indicatedLocation;
+            if (attachTo)
+            {
+                transform.parent.position = attachTo.transform.position;
+            }
+            else
+            {
+                //?
+            }
             if(buildable)
             {
                 oline.color = 1;
@@ -75,15 +83,16 @@ public class Building : MonoBehaviour
     }
     #region Custom Methods
 
-    public void GiveBuildLocation(Vector3 pos)
+    public void GiveBuildLocation(GameObject attach, BuildableFloor flo)
     {
-        if (pos != null)
+        if (attach != null)
         {
-            indicatedLocation = pos;
+            attachTo = attach.transform;
+            floor = flo;
         }
         else
         {
-            indicatedLocation = Vector3.zero;
+            attachTo = null;
             Debug.Log("Failed to get building position");
         }
     }
@@ -92,6 +101,7 @@ public class Building : MonoBehaviour
     {
         if (buildable)
         {
+            floor.ParentBuilding(gameObject, attachTo.transform);
             built = true;
             if (gameObject.GetComponent<Collider>())
             {

@@ -40,10 +40,24 @@ public class BuildableFloor : MonoBehaviour
     #region Custom Methods
     public void ParentBuilding(GameObject building, Transform attachPoint)
     {
-        building.transform.parent = attachPoint;
-        building.transform.position = attachPoint.position;
-        building.transform.rotation = attachPoint.rotation;
+        building.transform.parent.parent = attachPoint;
+        building.transform.parent.position = attachPoint.position;
+        building.transform.parent.rotation = attachPoint.rotation;
 
+        for (int i = 0; i < buildings.GetLength(0); i++)
+        {
+            for (int j = 0; j < buildings.GetLength(1); j++)
+            {
+                if( attachPoint == attachPoints[i, j])
+                {
+                    buildings[i, j] = building;
+                }
+                else
+                {
+                    Debug.LogWarning("Could not parent building" + building.name+ " to " + attachPoint.gameObject.name);
+                }
+            }
+        }
     }
     #endregion
 }

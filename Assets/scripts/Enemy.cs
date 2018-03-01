@@ -37,8 +37,11 @@ public class Enemy : MonoBehaviour
     {
         if (Vector3.Distance(GameManager.gm.player.transform.position, transform.position) > 2)
         {
-            agent.SetDestination(GameManager.gm.player.transform.position);
-            agent.isStopped = false;
+            if (agent.isOnNavMesh)
+            {
+                agent.SetDestination(GameManager.gm.player.transform.position);
+                agent.isStopped = false;
+            }
         }
         else
         {

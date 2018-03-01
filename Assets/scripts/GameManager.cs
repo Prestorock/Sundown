@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 /*===================================
 Project:	Sundown Survival	
@@ -19,19 +20,22 @@ public class GameManager : MonoBehaviour
     public static GameManager gm;
 
     #region Public Variables
-    public GameObject playerPrefab;
     public GameObject surviveSpawn;
     public GameObject scavengeSpawn;
+    public GameObject baseParent;
+    public GameObject storeObjectGroup;
+    [Space]
+    public GameObject playerPrefab;
     public GameObject buildFloor;
     public Vector2 floorGridSize;
     public GameObject pauseMenu;
     public GameObject buildingMenu;
     public GameObject powerups;
-    public GameObject storeObjectGroup;
-    public GameObject baseParent;
     public float ScavengeSeconds = 60;
     [HideInInspector]
     public Player player;
+    public Text ammoText;
+    public Text supplyText;
     #endregion
 
     #region Private Variables
@@ -43,6 +47,7 @@ public class GameManager : MonoBehaviour
     private Mode GameMode = Mode.Scavenge;
     private float floorheight = 0; //comment out reference in GenerateFloor if we ever start changing this.
     private float modeTimer = 0f;
+    private bool gameFullyInitialized = false;
     #endregion
 
     #region Enumerators
@@ -70,7 +75,7 @@ public class GameManager : MonoBehaviour
         {
             //development mode special code.
             GenerateFloor();
-
+            GenerateNavMesh();
         }
     }
     private void Update()
@@ -82,24 +87,23 @@ public class GameManager : MonoBehaviour
 
         if (GameMode == Mode.Dev)
         {
-            StartCoroutine(ChangeGameMode(Mode.Survive));
-            //NOTE: Right now the Dev game mode starts the game in survival mode.
-
+            //DEV MODE CODE
         }
 
         //TODO: Find a good scavenge timer
         if (modeTimer >= ScavengeSeconds && GameMode == Mode.Scavenge)
         {
             StartCoroutine(ChangeGameMode(Mode.Survive));
-
+            print("times up. survive mode");
         }
         //TODO: Add Survival Mode when enemies are done;
-        /*
-        if(GameMode == Mode.Survival && ENEMIESAREDEAD)
+        
+        if(GameMode == Mode.Survive && modeTimer >= ScavengeSeconds)
         {
-            ChangeGameMode(Mode.Scavenge);
+            StartCoroutine(ChangeGameMode(Mode.Scavenge));
+            print("times up. scavenge mode");
         }
-        */
+
     }
     #endregion
 
@@ -107,10 +111,15 @@ public class GameManager : MonoBehaviour
 
     private void GenerateNavMesh()
     {
-        //floorgrid[0, 0].GetComponent<NavMeshSurface>().BuildNavMesh();
+        if (GameMode != Mode.Scavenge)
+        {
+            floorgrid[0, 0].GetComponent<NavMeshSurface>().BuildNavMesh();
+        }
     }
     IEnumerator ChangeGameMode(Mode mode)
     {
+        
+        modeTimer = 0;
         Camera.main.GetComponent<TDCamera>().fadeOut();
 
         GameMode = mode;
@@ -119,7 +128,7 @@ public class GameManager : MonoBehaviour
 
         while (Camera.main.GetComponent<TDCamera>().stillFading)
         {
-            print("fading out");
+            //print("fading out");
             yield return null;
         }
 
@@ -133,19 +142,18 @@ public class GameManager : MonoBehaviour
         GenerateNavMesh();
         SpawnThings();
         PlacePlayer();
-        Camera.main.GetComponent<TDCamera>().smoothTime = 0;
+        Camera.main.transform.position = new Vector3(player.transform.position.x, player.transform.position.y + Camera.main.GetComponent<TDCamera>().heightBuffer, player.transform.position.z);
         player.canMove = true;
         player.canAttack = true;
 
         while (Camera.main.GetComponent<TDCamera>().stillFading)
         {
-            print("fading in");
+            //print("fading in");
             yield return null;
         }
-
-        Camera.main.GetComponent<TDCamera>().smoothTime = 0.2f;
+        
         modeTimer = 0;
-
+        gameFullyInitialized = true;
     }
     public Mode GetGameMode()
     {
@@ -192,9 +200,16 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void DestroyFloor()
     {
-        if (FloorParent)
+        if (gameFullyInitialized != true)
         {
-            Destroy(FloorParent);
+            if (FloorParent)
+            {
+                Destroy(FloorParent);
+            }
+        }
+        else
+        {
+            baseParent.SetActive(false);
         }
     }
     /// <summary>
@@ -206,7 +221,7 @@ public class GameManager : MonoBehaviour
         FloorParent.transform.parent = baseParent.transform;
 
         GameObject floorPrefab;
-        if (GameMode == Mode.Survive)
+        if (GameMode == Mode.Survive || GameMode == Mode.Dev)
         {
 
             floorPrefab = buildFloor;
@@ -226,6 +241,8 @@ public class GameManager : MonoBehaviour
                 {
                     for (int j = 0; j < jmax; j++)
                     {
+                        //commented out the procedural floor code because we have a model for the store. If we had a lot more time this would be beefed up.
+                        #region procedural floor selection
                         /*
                         //BORDERS
                         if ((i == 0) || (i == imax - 1) || (j == 0) || (j == jmax - 1))
@@ -253,13 +270,14 @@ public class GameManager : MonoBehaviour
 
                         }
                         */
+                        #endregion
                         GameObject temp = Instantiate(floorPrefab, baseParent.transform.position, baseParent.transform.rotation, FloorParent.transform);
                         temp.name = ("floor" + i.ToString() + j.ToString());
                         floorgrid[i, j] = temp;
 
                         //TRANSLATION AND ROTATION
                         temp.transform.Translate(new Vector3(i * floorsize, floorheight, j * floorsize));
-
+                        #region procedural border translation
                         /*
                         //BORDERS
                         if ((i == 0) || (i == imax - 1) || (j == 0) || (j == jmax - 1))
@@ -312,10 +330,12 @@ public class GameManager : MonoBehaviour
                             }
                         }
                         */
+                        #endregion
                     }
                 }
             }
         }
+        #region procedural scavenge floor
         else if (GameMode == Mode.Scavenge)
         {
             /*
@@ -427,7 +447,7 @@ public class GameManager : MonoBehaviour
             }
         */
         }
-
+        #endregion
     }
     private void SpawnThings()
     {

@@ -95,14 +95,19 @@ public class Player : MonoBehaviour
     {
         return healthPoints;
     }
+
     public void AlterAmmo(int amount)
     {
         ammo += amount;
+        GameManager.gm.ammoText.text = ammo.ToString();
     }
+
     public void AlterSupplies(int amount)
     {
         supplies += amount;
+        GameManager.gm.supplyText.text = supplies.ToString();
     }
+
     private void AntiPauseActions()
     {
         if (Input.GetKeyDown(KeyCode.Escape) && !buildingMode)
@@ -145,7 +150,7 @@ public class Player : MonoBehaviour
                 }
                 if (closestObject)
                 {
-                    building.GiveBuildLocation(closestObject.transform.position);
+                    building.GiveBuildLocation(closestObject, floor);
                 }
             }
             else

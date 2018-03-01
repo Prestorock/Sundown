@@ -140,7 +140,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 0.99, y: 0.99, z: 0.99}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114180192734781924
 MonoBehaviour:
@@ -155,7 +155,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BuildingCheckMaterial: {fileID: 2100000, guid: 47e40c84faa4e9d4b8c044a894a2bea3,
     type: 2}
-  built: 0
 --- !u!114 &114324947464963550
 MonoBehaviour:
   m_ObjectHideFlags: 1
