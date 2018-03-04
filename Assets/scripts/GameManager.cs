@@ -74,8 +74,7 @@ public class GameManager : MonoBehaviour
         else
         {
             //development mode special code.
-            GenerateFloor();
-            GenerateNavMesh();
+            ChangeGameMode(Mode.Dev);
         }
     }
     private void Update()
@@ -98,7 +97,7 @@ public class GameManager : MonoBehaviour
         }
         //TODO: Add Survival Mode when enemies are done;
         
-        if(GameMode == Mode.Survive && modeTimer >= ScavengeSeconds)
+        if(modeTimer >= ScavengeSeconds && GameMode == Mode.Survive)
         {
             StartCoroutine(ChangeGameMode(Mode.Scavenge));
             print("times up. scavenge mode");
@@ -113,7 +112,14 @@ public class GameManager : MonoBehaviour
     {
         if (GameMode != Mode.Scavenge)
         {
+            floorgrid[0, 0].GetComponent<NavMeshSurface>().RemoveData();
+
             floorgrid[0, 0].GetComponent<NavMeshSurface>().BuildNavMesh();
+        }
+        else
+        {
+            storeObjectGroup.transform.parent.GetComponent<NavMeshSurface>().RemoveData();
+            storeObjectGroup.transform.parent.GetComponent<NavMeshSurface>().BuildNavMesh();
         }
     }
     IEnumerator ChangeGameMode(Mode mode)

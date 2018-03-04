@@ -39,6 +39,8 @@ public class Player : MonoBehaviour
     private bool buildingMode = false;
     private Building building;
     private bool isAlive = true;
+    private float punchingSpeed = 1.0f;
+    private int punchingDamage = 5;
 
     public int ammo { get; private set; }
     public int supplies { get; private set; }
@@ -53,7 +55,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if(healthPoints <= 0)
+        if (healthPoints <= 0)
         {
             Death();
         }
@@ -89,13 +91,18 @@ public class Player : MonoBehaviour
         canAttack = false;
         isAlive = false;
         maincam.fadeOut();
-        
+
     }
     public int GetHealth()
     {
         return healthPoints;
     }
 
+    public void AlterHealth(int amount)
+    {
+        healthPoints = Mathf.Clamp(healthPoints += amount, 0, maxHealth);
+
+    }
     public void AlterAmmo(int amount)
     {
         ammo += amount;
@@ -127,7 +134,7 @@ public class Player : MonoBehaviour
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Camera.main.WorldToScreenPoint(maincam.middlePosition));
         if (Physics.Raycast(ray, out hit)) //NOTE: Building ray needs to ignore all layers but the floor and the player 
-                                            //(the player just stops from building on yourself. Not a bug, a feature. :D)
+                                           //(the player just stops from building on yourself. Not a bug, a feature. :D)
         {
             if (hit.transform.GetComponent<BuildableFloor>())
             {
@@ -163,14 +170,6 @@ public class Player : MonoBehaviour
 
     private void KeyboardInput()
     {
-        if(Input.GetKeyDown(KeyCode.LeftBracket))
-        {
-            Mathf.Clamp(healthPoints -= 5, 0, 100);
-        }
-        else if (Input.GetKeyDown(KeyCode.RightBracket))
-        {
-            Mathf.Clamp(healthPoints += 5, 0, 100);
-        }
         if (canMove)
         {
             if (Input.GetKey(KeyCode.W))

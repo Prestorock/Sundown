@@ -18,6 +18,7 @@ public class Building : MonoBehaviour
     #region Public Variables
     //public GameObject modelObject;
     public Material BuildingCheckMaterial;
+    public int maxHealth = 100;
 	#endregion
 	
 	#region Private Variables
@@ -28,6 +29,7 @@ public class Building : MonoBehaviour
     private Outline oline;
     private Material mat;
     private Color matColor;
+    private int healthPoints;
     #endregion
 
     #region Unity Methods
@@ -82,6 +84,11 @@ public class Building : MonoBehaviour
         }
     }
     #region Custom Methods
+    public void AlterHealth(int amount)
+    {
+       healthPoints = Mathf.Clamp(healthPoints += amount, 0, maxHealth);
+
+    }
 
     public void GiveBuildLocation(GameObject attach, BuildableFloor flo)
     {

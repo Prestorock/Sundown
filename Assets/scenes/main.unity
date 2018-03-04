@@ -2892,6 +2892,37 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.77928925, y: 1.8868405, z: 13.672649}
   m_Center: {x: 0.0000021457672, y: 0.93769, z: -0.0000038146973}
+--- !u!84 &394524743
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_Width: 309
+  m_Height: 174
+  m_AntiAliasing: 1
+  m_DepthFormat: 1
+  m_ColorFormat: 0
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_BindMS: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 0
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
 --- !u!1 &422232577
 GameObject:
   m_ObjectHideFlags: 0
@@ -3605,7 +3636,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 534859818}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 96.09, y: 0, z: -34.1}
+  m_LocalPosition: {x: 95.85, y: 0, z: -34.1}
   m_LocalScale: {x: 0.92854863, y: 0.9285486, z: 0.9285486}
   m_Children:
   - {fileID: 1251222447}
@@ -5784,37 +5815,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!84 &994033414
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_ForcedFallbackFormat: 4
-  m_DownscaleFallback: 0
-  m_Width: 1108
-  m_Height: 623
-  m_AntiAliasing: 1
-  m_DepthFormat: 1
-  m_ColorFormat: 0
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_BindMS: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
 --- !u!1 &996293343
 GameObject:
   m_ObjectHideFlags: 0
@@ -6047,7 +6047,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1029799870}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 17.13, y: 0.45000002, z: 1.8900032}
+  m_LocalPosition: {x: 17.13, y: 0, z: 1.8900032}
   m_LocalScale: {x: 14.86182, y: 1, z: 20.75663}
   m_Children:
   - {fileID: 1716299720}
@@ -6061,7 +6061,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1029799870}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
   m_Name: 
@@ -6082,7 +6082,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_BuildHeightMesh: 0
-  m_NavMeshData: {fileID: 23800000, guid: bf44edaf952d7c64c8623941d255633d, type: 2}
+  m_NavMeshData: {fileID: 0}
 --- !u!1001 &1029856975
 Prefab:
   m_ObjectHideFlags: 0
@@ -6161,7 +6161,7 @@ Prefab:
         type: 2}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 2063462236}
+      objectReference: {fileID: 394524743}
     - target: {fileID: 20545022620918556, guid: cd5f4c23d620a444b80f6352d50574f4,
         type: 2}
       propertyPath: m_RenderingPath
@@ -6186,6 +6186,11 @@ Prefab:
         type: 2}
       propertyPath: m_ForceIntoRT
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114848267987863848, guid: cd5f4c23d620a444b80f6352d50574f4,
+        type: 2}
+      propertyPath: GameMode
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: cd5f4c23d620a444b80f6352d50574f4, type: 2}
@@ -7077,7 +7082,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: ee84517460a8f4e4190b92c62bad2b74, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 4294967295
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: ee84517460a8f4e4190b92c62bad2b74, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -7109,12 +7114,43 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1251222446}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10.747952, y: 1.0769496, z: 31.026915}
+  m_LocalPosition: {x: -10.747952, y: 2.34, z: 31.026915}
   m_LocalScale: {x: 1.0769496, y: 1.0769496, z: 1.0769496}
   m_Children: []
   m_Father: {fileID: 534859819}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!84 &1261275355
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_Width: 309
+  m_Height: 174
+  m_AntiAliasing: 1
+  m_DepthFormat: 1
+  m_ColorFormat: 0
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_BindMS: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
 --- !u!1 &1312599019
 GameObject:
   m_ObjectHideFlags: 0
@@ -11150,37 +11186,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.77928925, y: 1.8868405, z: 13.672651}
   m_Center: {x: 0.0000011920929, y: 0.93769026, z: 0.0000019073486}
---- !u!84 &2063462236
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_ForcedFallbackFormat: 4
-  m_DownscaleFallback: 0
-  m_Width: 1108
-  m_Height: 623
-  m_AntiAliasing: 1
-  m_DepthFormat: 1
-  m_ColorFormat: 0
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_BindMS: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 0
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
 --- !u!1 &2105268575
 GameObject:
   m_ObjectHideFlags: 0
