@@ -20,22 +20,29 @@ public class GameManager : MonoBehaviour
     public static GameManager gm;
 
     #region Public Variables
+    [Header("Scene Objects")]
     public GameObject surviveSpawn;
     public GameObject scavengeSpawn;
     public GameObject baseParent;
     public GameObject storeObjectGroup;
-    [Space]
+    
+
+    [Header("Prefabs")]
     public GameObject playerPrefab;
     public GameObject buildFloor;
-    public Vector2 floorGridSize;
     public GameObject pauseMenu;
     public GameObject buildingMenu;
     public GameObject powerups;
-    public float ScavengeSeconds = 60;
-    [HideInInspector]
-    public Player player;
     public Text ammoText;
     public Text supplyText;
+    public Text timerText;
+
+    [Header("Variables")]
+    public Vector2 floorGridSize;
+    public float ScavengeSeconds = 60;
+
+    [HideInInspector]
+    public Player player;
     #endregion
 
     #region Private Variables
@@ -79,9 +86,11 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
+        
         if (Time.timeScale != 0)
         {
             modeTimer += Time.deltaTime;
+            timerText.text = Mathf.RoundToInt( modeTimer) / 60 + " : " + Mathf.RoundToInt(modeTimer) % 60;
         }
 
         if (GameMode == Mode.Dev)
