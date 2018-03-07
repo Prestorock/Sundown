@@ -133,7 +133,7 @@ public class GameManager : MonoBehaviour
     }
     IEnumerator ChangeGameMode(Mode mode)
     {
-
+        modeTimer = 0; // stop infinite loop.
         Camera.main.GetComponent<TDCamera>().fadeOut();
 
         GameMode = mode;
