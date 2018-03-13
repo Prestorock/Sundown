@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 23903366696227730}
   - component: {fileID: 114258488951588588}
   - component: {fileID: 114026920192177558}
+  - component: {fileID: 114257116198388570}
   m_Layer: 13
   m_Name: Powerup
   m_TagString: Untagged
@@ -84,7 +85,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1334349190653276}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 4300000, guid: 329eb99f3634a014086e4733a2b3adad, type: 3}
 --- !u!114 &114026920192177558
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -99,7 +100,20 @@ MonoBehaviour:
   m_OverrideArea: 0
   m_Area: 0
   m_IgnoreFromBuild: 1
-  m_AffectedAgents: ffffffff
+  m_AffectedAgents: 
+--- !u!114 &114257116198388570
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1334349190653276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45b2cf57e9d033644bd31523da204793, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spinSpeed: 1
+  spinDir: 1
 --- !u!114 &114258488951588588
 MonoBehaviour:
   m_ObjectHideFlags: 1

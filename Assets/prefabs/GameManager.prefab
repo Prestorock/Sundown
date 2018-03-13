@@ -1761,8 +1761,7 @@ MonoBehaviour:
   scavengeSpawn: {fileID: 0}
   baseParent: {fileID: 0}
   storeObjectGroup: {fileID: 0}
-  ScavengeArea: {fileID: 114525389487821470}
-  SurvivalArea: {fileID: 0}
+  SpawnArea: {fileID: 0}
   playerPrefab: {fileID: 1730104753666060, guid: d6c1c84a208e9dd40bdd6b3e73f2565e,
     type: 2}
   buildFloor: {fileID: 1111501910464572, guid: 511dbbe5b1d77924f9b0fbb37f259afe, type: 2}
@@ -1773,7 +1772,7 @@ MonoBehaviour:
   supplyText: {fileID: 114638669529049386}
   timerText: {fileID: 114066391190844062}
   floorGridSize: {x: 6, y: 14}
-  ScavengeSeconds: 10
+  ScavengeSeconds: 60
   player: {fileID: 0}
   GameMode: 1
 --- !u!114 &114872168301083818

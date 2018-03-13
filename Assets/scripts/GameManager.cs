@@ -25,8 +25,7 @@ public class GameManager : MonoBehaviour
     public GameObject scavengeSpawn;
     public GameObject baseParent;
     public GameObject storeObjectGroup;
-    public SpawnArea ScavengeArea;
-    public SpawnArea SurvivalArea;
+    public SpawnArea SpawnArea;
 
 
     [Header("Prefabs")]
@@ -476,7 +475,7 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < r; i++)
             {
                 GameObject temp = Instantiate(powerups, PowerupParent.transform);
-                temp.transform.position = ScavengeArea.RandomPoint();
+                temp.transform.position = SpawnArea.RandomPoint();
             }
         }
         else if (GameMode == Mode.Survive)

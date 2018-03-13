@@ -61,8 +61,10 @@ public class Weapon : MonoBehaviour
             0,
             2
             );
+
         if(FiringMode == Rate.Semi)
         {
+            this.gameObject.name = "Pistol";
             mesh.mesh = gunMeshes[0];
             damage = Random.Range(1, 5);
             fireRate = Random.Range(0.2f, 0.8f);
@@ -70,6 +72,7 @@ public class Weapon : MonoBehaviour
         }
         else if (FiringMode == Rate.Auto)
         {
+            this.gameObject.name = "Uzi";
             mesh.mesh = gunMeshes[1];
             damage = Random.Range(1, 3);
             fireRate = Random.Range(0.1f, 0.3f);
@@ -77,6 +80,7 @@ public class Weapon : MonoBehaviour
         }
         else if (FiringMode == Rate.Burst)
         {
+            this.gameObject.name = "Shotgun";
             mesh.mesh = gunMeshes[2];
             damage = Random.Range(1, 3);
             fireRate = Random.Range(1, 3);

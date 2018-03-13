@@ -67,7 +67,7 @@ public class Powerup : MonoBehaviour
         transform.position = new Vector3(transform.position.x, GameManager.gm.GetFloorHeight()+.5f, transform.position.z);
         if(Power == Type.Gun)
         {
-            GameObject temp = Instantiate(baseGunPrefab, this.gameObject.transform.position, baseGunPrefab.transform.rotation);
+            GameObject temp = Instantiate(baseGunPrefab, this.gameObject.transform.position, baseGunPrefab.transform.rotation, this.gameObject.transform.parent);
             temp.name = "Weapon";
             Destroy(this.gameObject);
             //temp.transform.position = this.gameObject.transform.position;
