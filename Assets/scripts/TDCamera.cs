@@ -90,7 +90,7 @@ public class TDCamera : MonoBehaviour
         {
             target = GameManager.gm.player;
         }
-        if (Time.timeScale != 0)
+        if (Time.timeScale != 0 && GameManager.gm.playing)
         {
             //get the mouse cursor location
             Vector3 wPos = Input.mousePosition;
@@ -110,7 +110,7 @@ public class TDCamera : MonoBehaviour
     void LateUpdate()
     {
 
-        if (Time.timeScale != 0)
+        if (Time.timeScale != 0 && GameManager.gm.playing)
         {
             // Define a target position relative to the target transform
             Vector3 targetPos = new Vector3(middlePosition.x, target.transform.position.y + heightBuffer, middlePosition.z);

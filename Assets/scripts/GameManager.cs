@@ -25,25 +25,31 @@ public class GameManager : MonoBehaviour
     public GameObject scavengeSpawn;
     public GameObject baseParent;
     public GameObject storeObjectGroup;
-    public SpawnArea SpawnArea;
 
-
-    [Header("Prefabs")]
-    public GameObject playerPrefab;
-    public GameObject buildFloor;
+    [Header("Children")]
+    public GameObject mainCamera;
+    public GameObject menuCamera;
+    public GameObject mainMenu;
+    public GameObject HUDGroup;
     public GameObject pauseMenu;
     public GameObject buildingMenu;
-    public GameObject powerups;
     public Text ammoText;
     public Text supplyText;
     public Text timerText;
 
+    [Header("Prefabs")]
+    public GameObject playerPrefab;
+    public GameObject buildFloor;
+    public GameObject powerups;
+
     [Header("Variables")]
     public Vector2 floorGridSize;
     public float ScavengeSeconds = 60;
-
+    public SpawnArea SpawnArea;
     [HideInInspector]
     public Player player;
+    [HideInInspector]
+    public bool playing = false;
     #endregion
 
     #region Private Variables
@@ -59,7 +65,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Enumerators
-    public enum Mode { Scavenge, Survive, Dev };
+    public enum Mode { Scavenge, Survive, Dev, MainMenu };
 
     #endregion
 
@@ -72,12 +78,17 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         player = SpawnPlayer();
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Confined;
-        if (GameMode != Mode.Dev) //development mode can be started by setting the mode from the gamemaster object
-                                  //this will stop the normal progression of the game like removing the floor and spawning objects;
+
+        Cursor.visible = true;
+        //Cursor.lockState = CursorLockMode.Confined;
+        if (GameMode == Mode.Survive || GameMode == Mode.Scavenge) //development mode can be started by setting the mode from the gamemaster object
+                                                                   //this will stop the normal progression of the game like removing the floor and spawning objects;
         {
             StartCoroutine(ChangeGameMode(Mode.Scavenge));
+        }
+        else if (GameMode == Mode.MainMenu)
+        {
+            StartCoroutine(ChangeGameMode(Mode.MainMenu));
         }
         else
         {
@@ -87,11 +98,11 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
-        
+
         if (Time.timeScale != 0)
         {
             modeTimer += Time.deltaTime;
-            timerText.text = Mathf.RoundToInt( modeTimer) / 60 + " : " + Mathf.RoundToInt(modeTimer) % 60;
+            timerText.text = Mathf.RoundToInt(modeTimer) / 60 + " : " + Mathf.RoundToInt(modeTimer) % 60;
         }
 
         if (GameMode == Mode.Dev)
@@ -106,8 +117,8 @@ public class GameManager : MonoBehaviour
             print("times up. survive mode");
         }
         //TODO: Add Survival Mode when enemies are done;
-        
-        if(modeTimer >= ScavengeSeconds && GameMode == Mode.Survive)
+
+        if (modeTimer >= ScavengeSeconds && GameMode == Mode.Survive)
         {
             StartCoroutine(ChangeGameMode(Mode.Scavenge));
             print("times up. scavenge mode");
@@ -117,7 +128,25 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Custom Methods
+    public void PlayTheGame()
+    {
+        StartCoroutine(ChangeGameMode(Mode.Scavenge));
+    }
+    public void QuitToMenu()
+    {
+        StartCoroutine(ChangeGameMode(Mode.MainMenu));
+        playing = false;
+    }
 
+    public void QuitGame()
+    {
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+
+        Application.Quit();
+    }
     private void GenerateNavMesh()
     {
         if (GameMode != Mode.Scavenge)
@@ -134,41 +163,88 @@ public class GameManager : MonoBehaviour
     }
     IEnumerator ChangeGameMode(Mode mode)
     {
-        modeTimer = 0; // stop infinite loop.
-        Camera.main.GetComponent<TDCamera>().fadeOut();
-
         GameMode = mode;
-        player.canMove = false;
-        player.canAttack = false;
 
-        while (Camera.main.GetComponent<TDCamera>().stillFading)
+        if (GameMode == Mode.MainMenu)
         {
-            //print("fading out");
-            yield return null;
+            mainCamera.GetComponent<TDCamera>().fadeOut();
+
+            playing = false;
+            player.canMove = false;
+            player.canAttack = false;
+
+            while (mainCamera.GetComponent<TDCamera>().stillFading)
+            {
+                //print("fading out");
+                yield return null;
+            }
+
+            if (playing)
+            {
+                Cleanup();
+                DestroyFloor();
+                CollectPlayer();
+            }
+
+            mainCamera.GetComponent<TDCamera>().fadeIn();
+            mainMenu.SetActive(true);
+            menuCamera.SetActive(true);
+
+            while (mainCamera.GetComponent<TDCamera>().stillFading)
+            {
+                //print("fading out");
+                yield return null;
+            }
+            mainCamera.SetActive(false);
+
         }
-
-        Cleanup();
-        DestroyFloor();
-        CollectPlayer();
-
-        Camera.main.GetComponent<TDCamera>().fadeIn();
-
-        GenerateFloor();
-        GenerateNavMesh();
-        SpawnThings();
-        PlacePlayer();
-        Camera.main.transform.position = new Vector3(player.transform.position.x, player.transform.position.y + Camera.main.GetComponent<TDCamera>().heightBuffer, player.transform.position.z);
-        player.canMove = true;
-        player.canAttack = true;
-
-        while (Camera.main.GetComponent<TDCamera>().stillFading)
+        else
         {
-            //print("fading in");
-            yield return null;
+            if (playing == false)
+            {
+                mainCamera.SetActive(true);
+
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = false;
+                playing = true;
+            }
+            modeTimer = 0; // stop infinite loop.
+            mainCamera.GetComponent<TDCamera>().fadeOut();
+
+            player.canMove = true;
+            player.canAttack = true;
+
+            while (mainCamera.GetComponent<TDCamera>().stillFading)
+            {
+                //print("fading out");
+                yield return null;
+            }
+
+            menuCamera.SetActive(false);
+            mainMenu.SetActive(false);
+            Cleanup();
+            DestroyFloor();
+            CollectPlayer();
+
+            mainCamera.GetComponent<TDCamera>().fadeIn();
+
+            GenerateFloor();
+            GenerateNavMesh();
+            SpawnThings();
+            PlacePlayer();
+            mainCamera.transform.position = new Vector3(player.transform.position.x, player.transform.position.y + mainCamera.GetComponent<TDCamera>().heightBuffer, player.transform.position.z);
+            player.canMove = true;
+            player.canAttack = true;
+
+            while (mainCamera.GetComponent<TDCamera>().stillFading)
+            {
+                //print("fading in");
+                yield return null;
+            }
+
+            modeTimer = 0;
+            gameFullyInitialized = true;
         }
-        
-        modeTimer = 0;
-        gameFullyInitialized = true;
     }
     public Mode GetGameMode()
     {
@@ -194,7 +270,7 @@ public class GameManager : MonoBehaviour
             player.transform.position = surviveSpawn.transform.position;
 
         }
-        else
+        else if (GameMode == Mode.Dev)
         {
             //dev mode placement
             player.transform.position = surviveSpawn.transform.position;

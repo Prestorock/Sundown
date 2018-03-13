@@ -56,6 +56,10 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        if(maincam == null)
+        {
+            maincam = GameManager.gm.mainCamera.GetComponent<TDCamera>();
+        }
         if (healthPoints <= 0)
         {
             Death();
