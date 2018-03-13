@@ -111,7 +111,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbb62a007ffcfc74bbc8637274189326, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Power: 0
+  relativeAmmoChance: 92.7
+  relativeSuppliesChance: 34.6
+  relativeGunChance: 7.4
+  baseGunPrefab: {fileID: 1791912386194734, guid: 16769d12fecd1044eb94977f35ba0a94,
+    type: 2}
 --- !u!135 &135884168128831230
 SphereCollider:
   m_ObjectHideFlags: 1

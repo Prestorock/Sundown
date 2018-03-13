@@ -25,7 +25,9 @@ public class GameManager : MonoBehaviour
     public GameObject scavengeSpawn;
     public GameObject baseParent;
     public GameObject storeObjectGroup;
-    
+    public SpawnArea ScavengeArea;
+    public SpawnArea SurvivalArea;
+
 
     [Header("Prefabs")]
     public GameObject playerPrefab;
@@ -469,15 +471,12 @@ public class GameManager : MonoBehaviour
         if (GameMode == Mode.Scavenge)
         {
             storeObjectGroup.SetActive(true);
-            int r = Random.Range(1, 100);
+            int r = Random.Range(60, 100);
             Debug.Log("Powerups Spawned: " + r);
             for (int i = 0; i < r; i++)
             {
                 GameObject temp = Instantiate(powerups, PowerupParent.transform);
-                temp.transform.position = new Vector3(Random.Range(0, floorGridSize.x * 10) - 5,
-                                                        floorheight + .5f,
-                                                        Random.Range(0, floorGridSize.y * 10) - 5
-                                                        );
+                temp.transform.position = ScavengeArea.RandomPoint();
             }
         }
         else if (GameMode == Mode.Survive)

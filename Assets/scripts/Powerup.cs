@@ -15,16 +15,17 @@ Description:
 public class Powerup : MonoBehaviour 
 {
     #region Public Variables
-    public Type Power;
     [Range(0,100)]
     public float relativeAmmoChance;
     [Range(0,100)]
     public float relativeSuppliesChance;
     [Range(0,100)]
     public float relativeGunChance;
+    public GameObject baseGunPrefab;
     #endregion
 
     #region Private Variables
+    private Type Power;
     private float aChance;
     private float sChance;
     private float gChance;
@@ -64,6 +65,13 @@ public class Powerup : MonoBehaviour
 
         }
         transform.position = new Vector3(transform.position.x, GameManager.gm.GetFloorHeight()+.5f, transform.position.z);
+        if(Power == Type.Gun)
+        {
+            GameObject temp = Instantiate(baseGunPrefab, this.gameObject.transform.position, baseGunPrefab.transform.rotation);
+            temp.name = "Weapon";
+            Destroy(this.gameObject);
+            //temp.transform.position = this.gameObject.transform.position;
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -81,17 +89,17 @@ public class Powerup : MonoBehaviour
         Player p = player.GetComponent<Player>();
         if(Power == Type.Gun)
         {
-            Debug.Log("POWERUP!");
+            //Debug.Log("POWERUP!");
         }
         else if (Power == Type.Ammo)
         {
             p.AlterAmmo(1);
-            Debug.Log("ammo: "+ p.ammo);
+            //Debug.Log("ammo: "+ p.ammo);
         }
         else if (Power == Type.Supplies)
         {
             p.AlterSupplies(1);
-            Debug.Log("supplies" + p.supplies);
+            //Debug.Log("supplies" + p.supplies);
         }
     }
     #endregion

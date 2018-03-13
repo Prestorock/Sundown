@@ -15,21 +15,6 @@ TODO: Make this script object oriented so we can customize weapons EZ (including
 [RequireComponent(typeof(Interactable))]
 public class Weapon : MonoBehaviour
 {
-    public Weapon(Rate Type, float rateOfFire, int dmg)
-    {
-        FiringMode = Type;
-        fireRate = rateOfFire;
-        damage = dmg;
-    }
-
-    public Weapon(Rate Type, float rateOfFire, int dmg, int numberOfProjectiles)
-    {
-        FiringMode = Type;
-        fireRate = rateOfFire;
-        damage = dmg;
-        projectiles = numberOfProjectiles;
-    }
-
     #region Public Variables
     [HideInInspector]
     public bool isHeld = false;
@@ -39,11 +24,13 @@ public class Weapon : MonoBehaviour
     public int projectiles = 1;
     public GameObject bullet;
     public Transform bulletSpawn;
+    public Mesh[] gunMeshes;
     #endregion
 
     #region Private Variables
     private Rigidbody rb;
     private Collider col;
+    private MeshFilter mesh;
     private bool colliding = true;
     [SerializeField]
     private Rate FiringMode = Rate.Semi;
@@ -66,9 +53,45 @@ public class Weapon : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
-        Physics.IgnoreCollision(col, GameManager.gm.player.modelObject.GetComponent<Collider>(), true);
+        mesh = GetComponent<MeshFilter>();
         colliding = col.enabled;
+
+        FiringMode = (Rate)Mathf.Clamp(
+            Mathf.RoundToInt(Random.Range(-0.5f, 2.5f)),
+            0,
+            2
+            );
+        if(FiringMode == Rate.Semi)
+        {
+            mesh.mesh = gunMeshes[0];
+            damage = Random.Range(1, 5);
+            fireRate = Random.Range(0.2f, 0.8f);
+
+        }
+        else if (FiringMode == Rate.Auto)
+        {
+            mesh.mesh = gunMeshes[1];
+            damage = Random.Range(1, 3);
+            fireRate = Random.Range(0.1f, 0.3f);
+
+        }
+        else if (FiringMode == Rate.Burst)
+        {
+            mesh.mesh = gunMeshes[2];
+            damage = Random.Range(1, 3);
+            fireRate = Random.Range(1, 3);
+            projectiles = Random.Range(4, 8);
+
+        }
+
+        Invoke("StopTheErrors", 1.0f);
     }
+
+    private void StopTheErrors()
+    {
+        Physics.IgnoreCollision(col, GameManager.gm.player.modelObject.GetComponent<Collider>(), true);
+    }
+
     private void Update()
     {
         if (isHeld && colliding == true)
