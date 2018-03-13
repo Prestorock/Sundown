@@ -16,9 +16,18 @@ public class Powerup : MonoBehaviour
 {
     #region Public Variables
     public Type Power;
+    [Range(0,100)]
+    public float relativeAmmoChance;
+    [Range(0,100)]
+    public float relativeSuppliesChance;
+    [Range(0,100)]
+    public float relativeGunChance;
     #endregion
 
     #region Private Variables
+    private float aChance;
+    private float sChance;
+    private float gChance;
     #endregion
 
     #region Enumerators
@@ -26,26 +35,32 @@ public class Powerup : MonoBehaviour
     {
         Ammo,
         Supplies,
-        Powerup
+        Gun
     };
     #endregion
 
     #region Unity Methods
     private void Start()
     {
+        //this is probably unnecessary but I'm tired
+        //takes the public variables and turns them into a standard percentage value
+        aChance = ((relativeAmmoChance / (relativeAmmoChance + relativeSuppliesChance + relativeGunChance ))*100);
+        sChance = ((relativeSuppliesChance / (relativeAmmoChance + relativeSuppliesChance + relativeGunChance)) * 100);
+        gChance = ((relativeGunChance / (relativeAmmoChance + relativeSuppliesChance + relativeGunChance)) * 100);
+
         int r = Random.Range(1, 100);
-        if (r <= 43)
+        if (r <= aChance)
         {
             Power = Type.Ammo;
         }
-        else if (r <= 86)
+        else if (r <= sChance + aChance)
         {
             Power = Type.Supplies;
 
         }
         else
         {
-            Power = Type.Powerup;
+            Power = Type.Gun;
 
         }
         transform.position = new Vector3(transform.position.x, GameManager.gm.GetFloorHeight()+.5f, transform.position.z);
@@ -64,7 +79,7 @@ public class Powerup : MonoBehaviour
     private void AwardPowerup(GameObject player)
     {
         Player p = player.GetComponent<Player>();
-        if(Power == Type.Powerup)
+        if(Power == Type.Gun)
         {
             Debug.Log("POWERUP!");
         }

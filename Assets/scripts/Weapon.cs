@@ -15,9 +15,19 @@ TODO: Make this script object oriented so we can customize weapons EZ (including
 [RequireComponent(typeof(Interactable))]
 public class Weapon : MonoBehaviour
 {
-    public Weapon(Rate Type)
+    public Weapon(Rate Type, float rateOfFire, int dmg)
     {
         FiringMode = Type;
+        fireRate = rateOfFire;
+        damage = dmg;
+    }
+
+    public Weapon(Rate Type, float rateOfFire, int dmg, int numberOfProjectiles)
+    {
+        FiringMode = Type;
+        fireRate = rateOfFire;
+        damage = dmg;
+        projectiles = numberOfProjectiles;
     }
 
     #region Public Variables
