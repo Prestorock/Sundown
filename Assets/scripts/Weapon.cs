@@ -15,18 +15,40 @@ TODO: Make this script object oriented so we can customize weapons EZ (including
 [RequireComponent(typeof(Interactable))]
 public class Weapon : MonoBehaviour
 {
+    public Weapon(Rate Type)
+    {
+        FiringMode = Type;
+    }
+
     #region Public Variables
+    [HideInInspector]
     public bool isHeld = false;
     public bool isGun = true;
     public int damage = 1;
-    public float reloadTime = 1;
+    public float fireRate = 1;
     public int projectiles = 1;
+    public GameObject bullet;
+    public Transform bulletSpawn;
     #endregion
 
     #region Private Variables
     private Rigidbody rb;
     private Collider col;
     private bool colliding = true;
+    [SerializeField]
+    private Rate FiringMode = Rate.Semi;
+    private bool fired = false;
+    private bool triggerHeld = false;
+    private float rTimer = 0.0f;
+    #endregion
+
+    #region Enumerations
+    public enum Rate
+    {
+        Semi,
+        Auto,
+        Burst
+    };
     #endregion
 
     #region Unity Methods
@@ -51,6 +73,14 @@ public class Weapon : MonoBehaviour
             col.enabled = true;
             colliding = true;
 
+        }
+        if (rTimer > 0)
+        {
+            rTimer -= Time.deltaTime;
+        }
+        else if (fired == true)
+        {
+            Reload();
         }
     }
 
@@ -79,5 +109,47 @@ public class Weapon : MonoBehaviour
     #endregion
 
     #region Custom Methods
+    public void Shoot()
+    {
+        if (fired == false)
+        {
+            if (FiringMode == Rate.Auto)
+            {
+                Instantiate(bullet, this.transform.position, this.transform.rotation);
+                rTimer = fireRate;
+                fired = true;
+            }
+            else if (triggerHeld == false)
+            {
+                if(FiringMode == Rate.Burst)
+                {
+                    for (int i = 0; i < projectiles; i++)
+                    {
+                        Instantiate(bullet, this.transform.position, Quaternion.Euler(0,bulletSpawn.transform.rotation.eulerAngles.y + Random.Range(-2.0f, 2.0f), 0));
+                    }
+                    rTimer = fireRate;
+                    fired = true;
+                }
+                else
+                {
+                    Instantiate(bullet, this.transform.position, this.transform.rotation);
+                    rTimer = fireRate;
+                    fired = true;
+                }
+            }
+        }
+    }
+
+    public void Reload()
+    {
+        if (rTimer <= 0)
+        {
+            fired = false;
+        }
+    }
+    public void TriggerHeld(bool b)
+    {
+        triggerHeld = b;
+    }
     #endregion
 }

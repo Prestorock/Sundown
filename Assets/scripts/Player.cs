@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
     public int maxHealth = 100;
     public float speed = 0.1f;
     public GameObject modelObject;
-    public GameObject bullet; //weapon should change bullets
+    //public GameObject bullet; //weapon should change bullets
     public GameObject gunAttach;
     public GameObject stashAttach;
     public SelectionTarget SelectCollider;
@@ -35,6 +35,7 @@ public class Player : MonoBehaviour
     private GameObject targetObj = null;
     //TODO: make it so we can only have to ref the interactable script for object info
     private GameObject heldObj = null;
+    private Weapon weaponscript = null;
     private GameObject stashedWeapon = null;
     private bool buildingMode = false;
     private Building building;
@@ -233,7 +234,7 @@ public class Player : MonoBehaviour
 
     private void MouseInput()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
             if (!buildingMode) //NOT BUILDING
             {
@@ -245,6 +246,8 @@ public class Player : MonoBehaviour
                         if (canAttack)
                         {
                             Attack(heldObj);
+                            weaponscript.TriggerHeld(true);
+
                         }
                     }
                 }
@@ -260,6 +263,11 @@ public class Player : MonoBehaviour
             {
                 PlaceBuilding(building);
             }
+        }
+        if(Input.GetMouseButtonUp(0))
+        {
+            if(heldObj)
+            weaponscript.TriggerHeld(false);
         }
 
         if (Input.GetMouseButtonDown(1))
@@ -292,12 +300,15 @@ public class Player : MonoBehaviour
                 heldObj.transform.parent = stashAttach.transform;
                 heldObj.transform.position = stashAttach.transform.position;
                 heldObj.transform.rotation = stashAttach.transform.rotation;
+                weaponscript = heldObj.GetComponent<Weapon>();
+
             }
             else
             {
                 return;
             }
         }
+
         heldObj = target;
         SelectCollider.SetHeldObject(heldObj);
         heldObj.transform.parent = gunAttach.transform;
@@ -306,6 +317,9 @@ public class Player : MonoBehaviour
         heldObj.GetComponentInParent<Rigidbody>().useGravity = false;
         heldObj.GetComponentInParent<Rigidbody>().isKinematic = true;
         heldObj.GetComponent<Weapon>().isHeld = true;
+        weaponscript = heldObj.GetComponent<Weapon>();
+
+
 
     }
 
@@ -322,7 +336,7 @@ public class Player : MonoBehaviour
             rb.AddRelativeForce(Vector3.forward * 100);
             SelectCollider.SetHeldObject(null);
             heldObj = null;
-
+            weaponscript = null;
         }
         else
         {
@@ -353,6 +367,8 @@ public class Player : MonoBehaviour
                 heldObj.transform.rotation = gunAttach.transform.rotation;
                 heldObj.GetComponentInParent<Rigidbody>().useGravity = false;
                 heldObj.GetComponentInParent<Rigidbody>().isKinematic = true;
+                weaponscript = heldObj.GetComponent<Weapon>();
+
             }
             else
             {
@@ -364,6 +380,8 @@ public class Player : MonoBehaviour
                 heldObj.transform.rotation = gunAttach.transform.rotation;
                 heldObj.GetComponentInParent<Rigidbody>().useGravity = false;
                 heldObj.GetComponentInParent<Rigidbody>().isKinematic = true;
+                weaponscript = heldObj.GetComponent<Weapon>();
+
             }
         }
     }
@@ -379,7 +397,8 @@ public class Player : MonoBehaviour
         {
             if (weapon.CompareTag("gun") == true)
             {
-                Instantiate(bullet, heldObj.transform.position, heldObj.transform.rotation);
+
+                weaponscript.Shoot();
             }
 
             else if (weapon.CompareTag("melee") == true)

@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4591939541553294}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: stashAttach
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   - component: {fileID: 136535518461359372}
   - component: {fileID: 23372952040392274}
   - component: {fileID: 33952597050361584}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,7 @@ GameObject:
   - component: {fileID: 4115359076658552}
   - component: {fileID: 65621760134228326}
   - component: {fileID: 114363509008641944}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: interactTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,7 +71,7 @@ GameObject:
   - component: {fileID: 4030400813197682}
   - component: {fileID: 114422971418575214}
   - component: {fileID: 54010634766737722}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 7707008975528953803, guid: 0000000000000000d000000000000000, type: 0}
@@ -86,7 +86,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4257906602620940}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: gunAttach
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -255,7 +255,6 @@ MonoBehaviour:
   maxHealth: 100
   speed: 10
   modelObject: {fileID: 1092204451663982}
-  bullet: {fileID: 1607220627184286, guid: 599eb76ccc27b7a4891a52f69be7d7c2, type: 2}
   gunAttach: {fileID: 1747226185515484}
   stashAttach: {fileID: 1032656257659238}
   SelectCollider: {fileID: 114363509008641944}

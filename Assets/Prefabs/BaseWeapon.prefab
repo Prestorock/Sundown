@@ -27,7 +27,7 @@ GameObject:
   - component: {fileID: 114866625705351156}
   - component: {fileID: 64351467240067350}
   - component: {fileID: 54762592342833292}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: BaseWeapon
   m_TagString: gun
   m_Icon: {fileID: 4660412927644837186, guid: 0000000000000000d000000000000000, type: 0}
@@ -170,5 +170,8 @@ MonoBehaviour:
   isHeld: 0
   isGun: 1
   damage: 1
-  reloadTime: 1
+  fireRate: 0
   projectiles: 1
+  bullet: {fileID: 1607220627184286, guid: 599eb76ccc27b7a4891a52f69be7d7c2, type: 2}
+  bulletSpawn: {fileID: 0}
+  FiringMode: 0
