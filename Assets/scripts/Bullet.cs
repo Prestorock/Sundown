@@ -13,7 +13,7 @@ Description: A bullet script. This should accept the damage from the weapon that
 
 ===================================*/
 
-public class Bullet : MonoBehaviour 
+public class Bullet : MonoBehaviour
 {
     #region Public Variables
     public float speed;
@@ -41,21 +41,25 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    void Update () {
-        timer += Time.deltaTime;
-
-        if(timer >= lifetime)
+    void FixedUpdate()
+    {
+        if (Time.timeScale != 0)
         {
-            Destroy(this.gameObject);
+            timer += Time.deltaTime;
+
+            if (timer >= lifetime)
+            {
+                Destroy(this.gameObject);
+            }
+            transform.Translate(Vector3.forward * speed);
         }
-        transform.Translate(Vector3.forward*speed);
-	}
-	#endregion
-	
-	#region Custom Methods
+    }
+    #endregion
+
+    #region Custom Methods
     public void SetDamage(int d)
     {
         damage = d;
     }
-	#endregion
+    #endregion
 }

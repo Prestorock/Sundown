@@ -1,60 +1,91 @@
-﻿Shader "FX/Ghost" {
-	Properties{
-		_Color("Color", Color) = (1,1,1,1)
-		_MainTex("Albedo (RGB)", 2D) = "white" {}
-		_NormalTex("Normal (RGB)", 2D) = "white" {}
-		_EmissionTex("Emission (RGB)", 2D) = "white" {}
-		_Glossiness("Smoothness", Range(0,1)) = 0.5
-		_Metallic("Metallic", Range(0,1)) = 0.0
-		_Blightness("Emission?", Range(0,3)) = 0.0
-	}
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-		SubShader{
+Shader "Custom/Ghost2"
+{
+	Properties
+	{
+		_MainTex("Texture", 2D) = "white" {}
+	_NoiseTex("Texture", 2D) = "white" {}
+	[MaterialToggle] PixelSnap("Pixel snap", Float) = 0
+		_EdgeColour1("Edge colour 1", Color) = (1.0, 1.0, 1.0, 1.0)
+		_EdgeColour2("Edge colour 2", Color) = (1.0, 1.0, 1.0, 1.0)
+		_Level("Dissolution level", Range(0.0, 1.0)) = 0.1
+		_Edges("Edge width", Range(0.0, 1.0)) = 0.1
+		_ScrollSpeeds ("Scroll Speeds", vector) = (-5, -20,0, 0)
+	}
+		SubShader
+	{
+		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
+		LOD 100
 
 		Pass
 	{
-		Zwrite On
-		ColorMask 0
-		Lighting OFF
-	}
-
-
-		Tags{ "RenderType" = "Transparent" "Queue" = "Transparent" }
-		Zwrite On
-		ZTest LEqual
+		Blend SrcAlpha OneMinusSrcAlpha
+		Cull Off
+		Lighting Off
+		ZWrite Off
+		Fog{ Mode Off }
 
 		CGPROGRAM
-		// Physically based Standard lighting model, and enable shadows on all light types
-#pragma surface surf Standard fullforwardshadows alpha
+#pragma vertex vert
+#pragma fragment frag
+		// make fog work
+#pragma multi_compile DUMMY PIXELSNAP_ON
 
-		// Use shader model 3.0 target, to get nicer looking lighting
-#pragma target 3.0
+#include "UnityCG.cginc"
 
-		sampler2D _MainTex;
-	sampler2D _NormalTex;
-	sampler2D _EmissionTex;
-	half _Blightness;
-
-	struct Input {
-		float2 uv_MainTex;
+		struct appdata
+	{
+		float4 vertex : POSITION;
+		float2 uv : TEXCOORD0;
 	};
 
-	half _Glossiness;
-	half _Metallic;
-	fixed4 _Color;
+	struct v2f
+	{
+		float2 uv : TEXCOORD0;
+		float4 vertex : SV_POSITION;
+	};
 
-	void surf(Input IN, inout SurfaceOutputStandard o) {
-		// Albedo comes from a texture tinted by color
-		fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
-		o.Albedo = c.rgb;
-		// Metallic and smoothness come from slider variables
-		o.Metallic = _Metallic * _Color.a;
-		o.Smoothness = _Glossiness * _Color.a;
-		o.Normal = tex2D(_NormalTex, IN.uv_MainTex) * _Color.a;
-		o.Emission = (tex2D(_EmissionTex, IN.uv_MainTex) * _Color.a) * _Blightness;
-		o.Alpha = c.a;
+	sampler2D _MainTex;
+	sampler2D _NoiseTex;
+	float4 _EdgeColour1;
+	float4 _EdgeColour2;
+	float _Level;
+	float _Edges;
+	float4 _MainTex_ST;
+	float4 _ScrollSpeeds;
+
+	v2f vert(appdata v)
+	{
+		v2f o;
+		o.vertex = UnityObjectToClipPos(v.vertex);
+		o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+
+		o.uv += _ScrollSpeeds * _Time.x;
+		UNITY_TRANSFER_FOG(0, 0.vertex);
+
+#ifdef PIXELSNAP_ON
+		o.vertex = UnityPixelSnap(o.vertex);
+#endif
+
+		return o;
 	}
-	ENDCG
+
+	fixed4 frag(v2f i) : SV_Target
+	{
+		// sample the texture
+		float cutout = tex2D(_NoiseTex, i.uv).r;
+	fixed4 col = tex2D(_MainTex, i.uv);
+
+	if (cutout < _Level)
+		discard;
+
+	if (cutout < col.a && cutout < _Level + _Edges)
+		col = lerp(_EdgeColour1, _EdgeColour2, (cutout - _Level) / _Edges);
+
+	return col;
 	}
-		FallBack "Diffuse"
+		ENDCG
+	}
+	}
 }

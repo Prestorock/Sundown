@@ -187,7 +187,6 @@ public class GameManager : MonoBehaviour
             }
 
             mainCamera.GetComponent<TDCamera>().fadeIn();
-            mainMenu.SetActive(true);
             menuCamera.SetActive(true);
 
             while (mainCamera.GetComponent<TDCamera>().stillFading)
@@ -195,6 +194,7 @@ public class GameManager : MonoBehaviour
                 //print("fading out");
                 yield return null;
             }
+            mainMenu.SetActive(true);
             mainCamera.SetActive(false);
 
         }

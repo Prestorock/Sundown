@@ -37,7 +37,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1607220627184286}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -6.3792605, y: 2.312, z: -7.886036}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -55,9 +55,9 @@ Rigidbody:
   m_AngularDrag: 0.05
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 2
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!65 &65743824679774032
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -68,8 +68,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.05, y: 0.05, z: 0.05}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.10024569, y: 0.11026032, z: 1.2165666}
+  m_Center: {x: 0, y: 0, z: 0.049233675}
 --- !u!96 &96008680501407418
 TrailRenderer:
   serializedVersion: 2
@@ -119,8 +119,14 @@ TrailRenderer:
         outSlope: 0
         tangentMode: 0
       - serializedVersion: 2
-        time: 1
-        value: 0.5238119
+        time: 0.7928898
+        value: 0.7421514
+        inSlope: -1.2096763
+        outSlope: -1.2096763
+        tangentMode: 0
+      - serializedVersion: 2
+        time: 0.9885254
+        value: 0.0056310296
         inSlope: -0.7569557
         outSlope: -0.7569557
         tangentMode: 0
@@ -174,6 +180,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0f7d481f00c8ce4f8dd353b45559a03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
+  speed: 3
   trail: 1
   lifetime: 10
