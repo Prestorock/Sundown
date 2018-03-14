@@ -27,6 +27,7 @@ public class Enemy : MonoBehaviour
     private bool canAttack = true;
     private bool canMove = true;
     private GameObject target = null;
+    private GameObject secondaryTarget = null;
     private float attackCD = 0.0f;
     #endregion
 
@@ -67,15 +68,27 @@ public class Enemy : MonoBehaviour
     }
 
     private void Intelligence()
-    {
+    { //TODO: State based AI
         if (target)
         {
-            if (Vector3.Distance(target.transform.position, transform.position) > 2)
+            if (Vector3.Distance(target.transform.position, transform.position) > 3)
             {
                 if (agent.isOnNavMesh)
                 {
-                    agent.SetDestination(GameManager.gm.player.transform.position);
-                    agent.isStopped = false;
+
+                    NavMeshPath path = new NavMeshPath();
+                    agent.CalculatePath(target.transform.position, path);
+
+                    if (path.status != NavMeshPathStatus.PathComplete)
+                    {
+                        target = null;
+                    }
+                    else
+                    {
+                        agent.SetDestination(target.transform.position);
+                        agent.isStopped = false;
+                    }
+                        
                 }
             }
             else
@@ -100,7 +113,32 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            target = GameManager.gm.player.gameObject;
+            if (GameManager.gm.player.gameObject)
+            {
+                target = GameManager.gm.player.gameObject;
+                if (agent.isOnNavMesh)
+                {
+
+                    NavMeshPath path = new NavMeshPath();
+                    agent.CalculatePath(target.transform.position, path);
+
+                    if (path.status != NavMeshPathStatus.PathComplete)
+                    {
+                        target = GameObject.FindGameObjectWithTag("building");
+                        if (target)
+                        {
+                            agent.SetDestination(target.transform.position);
+                            agent.isStopped = false;
+                        }
+                    }
+                    else
+                    {
+                        agent.SetDestination(target.transform.position);
+                        agent.isStopped = false;
+                    }
+
+                }
+            }
         }
     }
 

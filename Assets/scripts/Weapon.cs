@@ -9,7 +9,6 @@ Company:	Sundown Studios
 Date:		28/01/2018 06:33
 -------------------------------------
 Description:
-TODO: Make this script object oriented so we can customize weapons EZ (including melee)
 ===================================*/
 
 [RequireComponent(typeof(Interactable))]

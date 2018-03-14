@@ -42,6 +42,7 @@ public class Building : MonoBehaviour
         matColor = GetComponent<Renderer>().material.color;
         GetComponent<Renderer>().material = BuildingCheckMaterial;
         GetComponent<Collider>().isTrigger = true;
+        healthPoints = maxHealth;
 
     }
 
@@ -67,6 +68,13 @@ public class Building : MonoBehaviour
                 mat.color = new Color(1, 0, 0, .2f);
             }
         }
+        else
+        {
+            if(healthPoints <= 0)
+            {
+                Death();
+            }
+        }
 	}
     #endregion
     private void OnTriggerExit(Collider other)
@@ -84,6 +92,10 @@ public class Building : MonoBehaviour
         }
     }
     #region Custom Methods
+    public void Death()
+    {
+        Destroy(this.gameObject);
+    }
     public void AlterHealth(int amount)
     {
        healthPoints = Mathf.Clamp(healthPoints += amount, 0, maxHealth);

@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     public GameObject storeObjectGroup;
 
     [Header("Children")]
+    public EnemyManager EnemyManager;
     public GameObject mainCamera;
     public GameObject menuCamera;
     public GameObject mainMenu;
@@ -110,13 +111,12 @@ public class GameManager : MonoBehaviour
             //DEV MODE CODE
         }
 
-        //TODO: Find a good scavenge timer
         if (modeTimer >= ScavengeSeconds && GameMode == Mode.Scavenge)
         {
             StartCoroutine(ChangeGameMode(Mode.Survive));
             print("times up. survive mode");
         }
-        //TODO: Add Survival Mode when enemies are done;
+        //TODO: Add Scavenge Mode when enemies are done;
 
         if (modeTimer >= ScavengeSeconds && GameMode == Mode.Survive)
         {
@@ -167,6 +167,13 @@ public class GameManager : MonoBehaviour
 
         if (GameMode == Mode.MainMenu)
         {
+
+            if (playing)
+            {
+                Cleanup();
+                DestroyFloor();
+                CollectPlayer();
+            }
             mainCamera.GetComponent<TDCamera>().fadeOut();
 
             playing = false;
@@ -179,12 +186,6 @@ public class GameManager : MonoBehaviour
                 yield return null;
             }
 
-            if (playing)
-            {
-                Cleanup();
-                DestroyFloor();
-                CollectPlayer();
-            }
 
             mainCamera.GetComponent<TDCamera>().fadeIn();
             menuCamera.SetActive(true);

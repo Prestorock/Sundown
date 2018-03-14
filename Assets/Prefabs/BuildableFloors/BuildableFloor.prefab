@@ -22,12 +22,8 @@ GameObject:
   - component: {fileID: 33426791929462158}
   - component: {fileID: 23198775113309336}
   - component: {fileID: 65213696953824404}
-  - component: {fileID: 114758437678913692}
-  - component: {fileID: 114411011505472544}
-  - component: {fileID: 114921753870020946}
-  - component: {fileID: 114638301018205708}
-  - component: {fileID: 114961435160776334}
   - component: {fileID: 114875004592546348}
+  - component: {fileID: 114758437678913692}
   m_Layer: 0
   m_Name: BuildableFloor
   m_TagString: floor
@@ -101,44 +97,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 10, y: 0.16148543, z: 10}
   m_Center: {x: 0, y: -0.08074272, z: 0}
---- !u!114 &114411011505472544
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1111501910464572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AgentTypeID: 0
-  m_StartPoint: {x: -3.0883512, y: 0, z: -0.11671877}
-  m_EndPoint: {x: -6.1385264, y: 0, z: -0.11656618}
-  m_Width: 10.252481
-  m_CostModifier: -1
-  m_Bidirectional: 1
-  m_AutoUpdatePosition: 0
-  m_Area: 0
---- !u!114 &114638301018205708
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1111501910464572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AgentTypeID: 0
-  m_StartPoint: {x: 3.4538445, y: 0, z: 0.08741808}
-  m_EndPoint: {x: 6.8060503, y: 0, z: -0.04019499}
-  m_Width: 10.002852
-  m_CostModifier: -1
-  m_Bidirectional: 1
-  m_AutoUpdatePosition: 0
-  m_Area: 0
 --- !u!114 &114758437678913692
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -178,41 +136,3 @@ MonoBehaviour:
   m_VoxelSize: 0.16666667
   m_BuildHeightMesh: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &114921753870020946
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1111501910464572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AgentTypeID: 0
-  m_StartPoint: {x: 0, y: 0, z: 3.157569}
-  m_EndPoint: {x: 0, y: 0, z: 7.9061956}
-  m_Width: 10.078026
-  m_CostModifier: -1
-  m_Bidirectional: 1
-  m_AutoUpdatePosition: 0
-  m_Area: 0
---- !u!114 &114961435160776334
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1111501910464572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AgentTypeID: 0
-  m_StartPoint: {x: 0, y: 0, z: -6.7620316}
-  m_EndPoint: {x: 0, y: 0, z: -1.9434409}
-  m_Width: 9.909779
-  m_CostModifier: -1
-  m_Bidirectional: 1
-  m_AutoUpdatePosition: 0
-  m_Area: 0
