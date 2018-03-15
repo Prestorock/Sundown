@@ -60,6 +60,7 @@ public class Building : MonoBehaviour
             if (attachTo)
             {
                 transform.parent.position = attachTo.transform.position;
+                buildable = true;
             }
             else
             {
@@ -87,9 +88,10 @@ public class Building : MonoBehaviour
     #endregion
     private void OnTriggerExit(Collider other)
     {
-
-        buildable = true;
-
+        if (attachTo != null)
+        {
+            buildable = true;
+        }
     }
 
     private void OnTriggerStay(Collider other)
@@ -114,11 +116,13 @@ public class Building : MonoBehaviour
     {
         if (attach != null)
         {
+            buildable = true;
             attachTo = attach.transform;
         }
         else
         {
             attachTo = null;
+            buildable = false;
             Debug.Log("Failed to get building position");
         }
     }

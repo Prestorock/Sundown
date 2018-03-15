@@ -129,8 +129,18 @@ public class Weapon : MonoBehaviour
             if (other.CompareTag("floor"))
             {
                 rb.useGravity = false;
+                rb.isKinematic = true;
+
 
             }
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("floor"))
+        {
+            transform.Translate(Vector3.up * .001f, Space.World);
         }
     }
 
@@ -140,7 +150,7 @@ public class Weapon : MonoBehaviour
         {
             if (other.CompareTag("floor"))
             {
-                rb.useGravity = true;
+                rb.isKinematic = false;
             }
         }
     }

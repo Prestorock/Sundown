@@ -27,6 +27,7 @@ GameObject:
   - component: {fileID: 114866625705351156}
   - component: {fileID: 64351467240067350}
   - component: {fileID: 54762592342833292}
+  - component: {fileID: 135725199976864356}
   m_Layer: 13
   m_Name: BaseWeapon
   m_TagString: gun
@@ -56,7 +57,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1791912386194734}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.05, y: 1.94, z: -9.2}
+  m_LocalPosition: {x: 64.01985, y: 0.616, z: 32.46977}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4817958671944552}
@@ -210,3 +211,15 @@ MonoBehaviour:
   shotSound: {fileID: 8300000, guid: 296e65f84ea227e40bcadeb142228de1, type: 3}
   reloadSound: {fileID: 8300000, guid: 335e6cb12c9eca748964b0b9aab413ac, type: 3}
   FiringMode: 2
+--- !u!135 &135725199976864356
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1791912386194734}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.30247957
+  m_Center: {x: -0.01310271, y: -0.016242981, z: 0.16100258}

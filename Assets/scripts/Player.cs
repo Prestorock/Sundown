@@ -145,15 +145,17 @@ public class Player : MonoBehaviour
 
     private void BuildingMode()
     {
+        canAttack = false;
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.B))
         {
             buildingMode = false;
+            building.held = false;
             building = null;
         }
 
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Camera.main.WorldToScreenPoint(maincam.middlePosition));
-        if (Physics.Raycast(ray, out hit, LayerMask.GetMask("floor"))) //NOTE: Building ray needs to ignore all layers but the floor and the player 
+        if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Floor"))) //NOTE: Building ray needs to ignore all layers but the floor and the player 
                                            //(the player just stops from building on yourself. Not a bug, a feature. :D)
         {
             BuildableFloor floor = hit.transform.GetComponent<BuildableFloor>();
@@ -421,8 +423,10 @@ public class Player : MonoBehaviour
         {
             if (weapon.CompareTag("gun") == true)
             {
-
-                weaponscript.Shoot();
+                if (!buildingMode)
+                {
+                    weaponscript.Shoot();
+                }
             }
 
             else if (weapon.CompareTag("melee") == true)

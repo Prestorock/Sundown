@@ -104,10 +104,42 @@ public class TDCamera : MonoBehaviour
             direction = Vector3.ClampMagnitude(direction, crosshairRadius);
 
             middlePosition = target.transform.position + direction;
+
+
+            // Define a target position relative to the target transform
+            Vector3 targetPos = new Vector3(middlePosition.x, target.transform.position.y + heightBuffer, middlePosition.z);
+            Vector3 smoothPos = new Vector3(target.transform.position.x, target.transform.position.y + heightBuffer, target.transform.position.z);
+            float offset = (crosshairRadius / 2.0f) - 0.75f;
+            if (targetPos.x > target.transform.position.x + offset)
+            {
+                smoothPos.x += crosshairRadius;
+            }
+            else if (targetPos.x < target.transform.position.x - offset)
+            {
+                smoothPos.x -= crosshairRadius;
+            }
+            if (targetPos.z > target.transform.position.z + offset)
+            {
+                smoothPos.z += crosshairRadius;
+            }
+            else if (targetPos.z < target.transform.position.z - offset)
+            {
+                smoothPos.z -= crosshairRadius;
+            }
+            // Smoothly move the camera towards that target position
+            transform.position = Vector3.SmoothDamp(transform.position, smoothPos, ref velocity, smoothTime);
+
+            //move the gui crosshair over the middle area
+            crosshair.GetComponent<RectTransform>().anchoredPosition = Camera.main.WorldToScreenPoint(middlePosition);
+            middlePosition.y = target.transform.position.y;
+            if (target.canMove)
+            {
+                target.modelObject.transform.LookAt(middlePosition);
+            }
         }
     }
 
-    void LateUpdate()
+   /* void LateUpdate()
     {
 
         if (Time.timeScale != 0 && GameManager.gm.playing)
@@ -143,7 +175,7 @@ public class TDCamera : MonoBehaviour
                 target.modelObject.transform.LookAt(middlePosition);
             }
         }
-    }
+    }*/
     #endregion
 
     #region Custom Methods

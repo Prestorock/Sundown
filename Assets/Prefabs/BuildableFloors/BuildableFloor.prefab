@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 65213696953824404}
   - component: {fileID: 114875004592546348}
   - component: {fileID: 114758437678913692}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: BuildableFloor
   m_TagString: floor
   m_Icon: {fileID: 0}
