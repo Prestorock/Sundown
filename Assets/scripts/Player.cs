@@ -95,8 +95,7 @@ public class Player : MonoBehaviour
         canMove = false;
         canAttack = false;
         isAlive = false;
-        maincam.fadeOut();
-
+        GameManager.gm.ChangeGameMode(GameManager.Mode.MainMenu);
     }
     public int GetHealth()
     {
@@ -141,9 +140,9 @@ public class Player : MonoBehaviour
         if (Physics.Raycast(ray, out hit)) //NOTE: Building ray needs to ignore all layers but the floor and the player 
                                            //(the player just stops from building on yourself. Not a bug, a feature. :D)
         {
-            if (hit.transform.GetComponent<BuildableFloor>())
-            {
                 BuildableFloor floor = hit.transform.GetComponent<BuildableFloor>();
+            if (floor)
+            {
 
                 float closestdistance = Mathf.Infinity;
                 GameObject closestObject = null;

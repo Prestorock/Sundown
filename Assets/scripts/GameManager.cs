@@ -13,6 +13,7 @@ Date:		23/01/2018 05:58
 -------------------------------------
 Description: A self referencial singleton that can help objects communicate and manage hud/gameplay
 
+    Sorry this code could definitely be cleaner
 ===================================*/
 
 public class GameManager : MonoBehaviour
@@ -52,6 +53,8 @@ public class GameManager : MonoBehaviour
     public Player player;
     [HideInInspector]
     public bool playing = false;
+    [HideInInspector]
+    public bool spawningEnemies = false;
     #endregion
 
     #region Private Variables
@@ -64,6 +67,7 @@ public class GameManager : MonoBehaviour
     private float floorheight = 0; //comment out reference in GenerateFloor if we ever start changing this.
     private float modeTimer = 0f;
     private bool gameFullyInitialized = false;
+    private bool hasBeggedToTheGameDevGodsMightiestofMighty = false;
     #endregion
 
     #region Enumerators
@@ -75,6 +79,32 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         gm = this;
+        hasBeggedToTheGameDevGodsMightiestofMighty = BegToTheElderGods("Oh Orryx, brigtest of lights, please deliver my code from evil and may my arrays always start at 0 and never stray. Amen.");
+        if (hasBeggedToTheGameDevGodsMightiestofMighty)
+        {
+            Debug.Log("We have said our prayers, but the gods are fickle and may have abandoned us yet.");
+        }
+    }
+    private bool BegToTheElderGods(string prayer)
+    {
+        bool accepted;
+        if (Random.value > 1 || Random.value < 0)
+        {
+            accepted = false;
+        }
+        else
+        {
+            accepted = true;
+        }
+
+        if (accepted == true)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     private void Start()
@@ -105,6 +135,7 @@ public class GameManager : MonoBehaviour
         {
             modeTimer += Time.deltaTime;
             timerText.text = Mathf.RoundToInt(modeTimer) / 60 + " : " + Mathf.RoundToInt(modeTimer) % 60;
+
         }
 
         if (GameMode == Mode.Dev)
@@ -119,11 +150,13 @@ public class GameManager : MonoBehaviour
         }
         //TODO: Add Scavenge Mode when enemies are done;
 
-        if (modeTimer >= ScavengeSeconds && GameMode == Mode.Survive)
+        if (modeTimer >= ScavengeSeconds && GameMode == Mode.Survive && EM.upkeep <= 0)
         {
             StartCoroutine(ChangeGameMode(Mode.Scavenge));
             print("times up. scavenge mode");
         }
+
+
 
     }
     #endregion
@@ -135,8 +168,7 @@ public class GameManager : MonoBehaviour
     }
     public void QuitToMenu()
     {
-        SceneManager.LoadScene(0, LoadSceneMode.Single);
-        playing = false;
+        StartCoroutine(ChangeGameMode(Mode.MainMenu));
         Time.timeScale = 1;
     }
 
@@ -163,13 +195,13 @@ public class GameManager : MonoBehaviour
             storeObjectGroup.transform.parent.GetComponent<NavMeshSurface>().BuildNavMesh();
         }
     }
-    IEnumerator ChangeGameMode(Mode mode)
+    public IEnumerator ChangeGameMode(Mode mode)
     {
         GameMode = mode;
 
         if (GameMode == Mode.MainMenu)
         {
-
+            
             if (playing)
             {
                 Cleanup();
@@ -187,7 +219,10 @@ public class GameManager : MonoBehaviour
                 //print("fading out");
                 yield return null;
             }
-
+            if (gameFullyInitialized == true)
+            {
+                SceneManager.LoadScene(0, LoadSceneMode.Single);
+            }
 
             mainCamera.GetComponent<TDCamera>().fadeIn();
             menuCamera.SetActive(true);
@@ -251,6 +286,10 @@ public class GameManager : MonoBehaviour
 
             modeTimer = 0; //actually set timer
             gameFullyInitialized = true;
+            if (GameMode == Mode.Survive)
+            {
+                EM.SpawnEnemies(40);
+            }
         }
     }
     public Mode GetGameMode()

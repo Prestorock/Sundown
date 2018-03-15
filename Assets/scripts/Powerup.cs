@@ -22,6 +22,10 @@ public class Powerup : MonoBehaviour
     [Range(0,100)]
     public float relativeGunChance;
     public GameObject baseGunPrefab;
+
+    [Space]
+    public Mesh ammoMesh;
+    public Mesh supplyMesh;
     #endregion
 
     #region Private Variables
@@ -53,10 +57,12 @@ public class Powerup : MonoBehaviour
         if (r <= aChance)
         {
             Power = Type.Ammo;
+            GetComponent<MeshFilter>().mesh = ammoMesh;
         }
         else if (r <= sChance + aChance)
         {
             Power = Type.Supplies;
+            GetComponent<MeshFilter>().mesh = supplyMesh;
 
         }
         else
@@ -65,6 +71,8 @@ public class Powerup : MonoBehaviour
 
         }
         transform.position = new Vector3(transform.position.x, GameManager.gm.GetFloorHeight()+.5f, transform.position.z);
+
+        //change to gun AFTER setting the spawn position. then destroy the dummy object(this one)
         if(Power == Type.Gun)
         {
             GameObject temp = Instantiate(baseGunPrefab, this.gameObject.transform.position, baseGunPrefab.transform.rotation, this.gameObject.transform.parent);

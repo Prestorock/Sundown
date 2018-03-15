@@ -17,12 +17,11 @@ public class EnemyManager : MonoBehaviour
     #region Public Variables
     public SpawnArea SpawnArea;
     public GameObject EnemyToSpawn;
-    [HideInInspector]
     public int upkeep = 0;
     #endregion
 
     #region Private Variables
-    private GameObject[] Enemies = new GameObject[40];
+    private GameObject[] Enemies = new GameObject[1];
     #endregion
 
     #region Enumerations
@@ -30,17 +29,23 @@ public class EnemyManager : MonoBehaviour
     #endregion
 
     #region Unity Methods
-    private void Update()
-    {
-    }
     #endregion
 
     #region Custom Methods
-    public void SpawnEnemy()
+    public void SpawnEnemies(int number)
     {
-        Vector3 spawnpoint = SpawnArea.RandomPoint();
-        GameObject temp = Instantiate(EnemyToSpawn, spawnpoint, EnemyToSpawn.transform.rotation, this.gameObject.transform);
-        Enemies[Enemies.Length] = temp;
+        Enemies = new GameObject[number];
+        System.Array.Resize(ref Enemies, upkeep + number);
+
+        for (int i = 0; i < number; i++)
+        {
+            Vector3 spawnpoint = SpawnArea.RandomPoint();
+            GameObject temp = Instantiate(EnemyToSpawn, spawnpoint, EnemyToSpawn.transform.rotation, this.gameObject.transform);
+            Enemies[i] = temp;
+            upkeep++;
+        }
+
+        GameManager.gm.spawningEnemies = false;
     }
 
     public void CleanupEnemies()
@@ -49,6 +54,8 @@ public class EnemyManager : MonoBehaviour
         {
             Destroy(enemy);
         }
+        upkeep = 0;
+        System.Array.Resize(ref Enemies, 0);
     }
     #endregion
 }

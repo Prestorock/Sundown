@@ -61,7 +61,7 @@ public class Weapon : MonoBehaviour
             2
             );
 
-        if(FiringMode == Rate.Semi)
+        if (FiringMode == Rate.Semi)
         {
             this.gameObject.name = "Pistol";
             mesh.mesh = gunMeshes[0];
@@ -149,26 +149,30 @@ public class Weapon : MonoBehaviour
     {
         if (fired == false)
         {
+            GameObject temp;
             if (FiringMode == Rate.Auto)
             {
-                Instantiate(bullet, this.transform.position, this.transform.rotation);
+                temp = Instantiate(bullet, this.transform.position, this.transform.rotation);
+                temp.GetComponent<Bullet>().SetDamage(damage);
                 rTimer = fireRate;
                 fired = true;
             }
             else if (triggerHeld == false)
             {
-                if(FiringMode == Rate.Burst)
+                if (FiringMode == Rate.Burst)
                 {
                     for (int i = 0; i < projectiles; i++)
                     {
-                        Instantiate(bullet, this.transform.position, Quaternion.Euler(0,bulletSpawn.transform.rotation.eulerAngles.y + Random.Range(-2.0f, 2.0f), 0));
+                        temp = Instantiate(bullet, this.transform.position, Quaternion.Euler(0, bulletSpawn.transform.rotation.eulerAngles.y + Random.Range(-2.0f, 2.0f), 0));
+                        temp.GetComponent<Bullet>().SetDamage(damage);
                     }
                     rTimer = fireRate;
                     fired = true;
                 }
                 else
                 {
-                    Instantiate(bullet, this.transform.position, this.transform.rotation);
+                    temp = Instantiate(bullet, this.transform.position, this.transform.rotation);
+                    temp.GetComponent<Bullet>().SetDamage(damage);
                     rTimer = fireRate;
                     fired = true;
                 }

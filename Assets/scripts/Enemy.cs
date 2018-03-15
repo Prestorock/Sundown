@@ -65,6 +65,7 @@ public class Enemy : MonoBehaviour
         canMove = false;
         canAttack = false;
 
+        GameManager.gm.EM.upkeep -= 1;
         Destroy(this.gameObject);
     }
 
@@ -146,7 +147,9 @@ public class Enemy : MonoBehaviour
     private void Attack(int dmg, Player target)
     {
         target.AlterHealth(-dmg);
-        target.GetComponent<Rigidbody>().AddForce((target.transform.position - transform.position)*dmg);
+        Vector3 dir = target.transform.position - transform.position;
+        dir = -dir.normalized;
+        target.GetComponent<Rigidbody>().AddForce(dir*dmg);
         attackCD = 0.0f;
     }
 
@@ -159,6 +162,11 @@ public class Enemy : MonoBehaviour
     public void SetEnemyManager(EnemyManager em)
     {
         EM = em;
+    }
+
+    public void AlterHealth(int amount)
+    {
+        healthPoints += amount;
     }
     #endregion
 }
