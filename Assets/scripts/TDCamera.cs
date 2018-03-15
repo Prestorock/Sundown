@@ -60,7 +60,7 @@ public class TDCamera : MonoBehaviour
     {
         //target = GameManager.gm.player;
         alpha = 1;
-        fadeIn();
+        FadeIn();
         if (target)
         {
             target.SetCamera(this);
@@ -147,12 +147,12 @@ public class TDCamera : MonoBehaviour
     #endregion
 
     #region Custom Methods
-    public void fadeOut()
+    public void FadeOut()
     {
         stillFading = true;
         fadeDir = 1;
     }
-    public void fadeIn()
+    public void FadeIn()
     {
         stillFading = true;
         fadeDir = -1;

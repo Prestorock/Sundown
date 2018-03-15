@@ -24,6 +24,8 @@ public class Weapon : MonoBehaviour
     public GameObject bullet;
     public Transform bulletSpawn;
     public Mesh[] gunMeshes;
+    public AudioClip shotSound;
+    public AudioClip reloadSound;
     #endregion
 
     #region Private Variables
@@ -156,6 +158,7 @@ public class Weapon : MonoBehaviour
                 temp.GetComponent<Bullet>().SetDamage(damage);
                 rTimer = fireRate;
                 fired = true;
+                AudioSource.PlayClipAtPoint(shotSound, transform.position);
             }
             else if (triggerHeld == false)
             {
@@ -168,6 +171,7 @@ public class Weapon : MonoBehaviour
                     }
                     rTimer = fireRate;
                     fired = true;
+                    AudioSource.PlayClipAtPoint(shotSound, transform.position);
                 }
                 else
                 {
@@ -175,6 +179,7 @@ public class Weapon : MonoBehaviour
                     temp.GetComponent<Bullet>().SetDamage(damage);
                     rTimer = fireRate;
                     fired = true;
+                    AudioSource.PlayClipAtPoint(shotSound, transform.position);
                 }
             }
         }
@@ -185,11 +190,19 @@ public class Weapon : MonoBehaviour
         if (rTimer <= 0)
         {
             fired = false;
+            if (FiringMode != Rate.Auto)
+            {
+                AudioSource.PlayClipAtPoint(reloadSound, transform.position);
+            }
         }
     }
     public void TriggerHeld(bool b)
     {
         triggerHeld = b;
+        if(b == false && FiringMode == Rate.Auto)
+        {
+            AudioSource.PlayClipAtPoint(reloadSound, transform.position);
+        }
     }
     #endregion
 }

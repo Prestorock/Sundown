@@ -109,6 +109,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        GenerateNavMesh();
         player = SpawnPlayer();
 
         Cursor.visible = true;
@@ -192,7 +193,7 @@ public class GameManager : MonoBehaviour
         storeObjectGroup.transform.parent.GetComponent<NavMeshSurface>().BuildNavMesh();
 
     }
-    public void playerDeath()
+    public void PlayerDeath()
     {
         QuitToMenu();
     }
@@ -209,7 +210,7 @@ public class GameManager : MonoBehaviour
                 DestroyFloor();
                 CollectPlayer();
             }
-            mainCamera.GetComponent<TDCamera>().fadeOut();
+            mainCamera.GetComponent<TDCamera>().FadeOut();
 
             playing = false;
             player.canMove = false;
@@ -225,7 +226,7 @@ public class GameManager : MonoBehaviour
                 SceneManager.LoadScene(0, LoadSceneMode.Single);
             }
 
-            mainCamera.GetComponent<TDCamera>().fadeIn();
+            mainCamera.GetComponent<TDCamera>().FadeIn();
             menuCamera.SetActive(true);
 
             while (mainCamera.GetComponent<TDCamera>().stillFading)
@@ -248,7 +249,7 @@ public class GameManager : MonoBehaviour
                 playing = true;
             }
             modeTimer = 0; // stop infinite loop.
-            mainCamera.GetComponent<TDCamera>().fadeOut();
+            mainCamera.GetComponent<TDCamera>().FadeOut();
 
             player.canMove = true;
             player.canAttack = true;
@@ -269,7 +270,7 @@ public class GameManager : MonoBehaviour
             DestroyFloor();
             CollectPlayer();
 
-            mainCamera.GetComponent<TDCamera>().fadeIn();
+            mainCamera.GetComponent<TDCamera>().FadeIn();
 
             GenerateFloor();
             GenerateNavMesh();

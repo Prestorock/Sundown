@@ -252,14 +252,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31533319380d7214bb4bcc0557aefd6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  speed: 10
   modelObject: {fileID: 1092204451663982}
   gunAttach: {fileID: 1747226185515484}
   stashAttach: {fileID: 1032656257659238}
   SelectCollider: {fileID: 114363509008641944}
+  hurtSound: {fileID: 8300000, guid: 84b7abb274a740f4eb26908baa615c0c, type: 3}
   canMove: 1
   canAttack: 1
+  attackSpeed: 1
+  punchingDamage: 5
+  speed: 10
 --- !u!136 &136535518461359372
 CapsuleCollider:
   m_ObjectHideFlags: 1

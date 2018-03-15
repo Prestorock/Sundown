@@ -27,9 +27,7 @@ public class Enemy : MonoBehaviour
     private bool canAttack = true;
     private bool canMove = true;
     private GameObject target = null;
-    private GameObject secondaryTarget = null;
     private float attackCD = 0.0f;
-    private EnemyManager EM;
     #endregion
 
     #region Enumerations
@@ -49,6 +47,13 @@ public class Enemy : MonoBehaviour
     {
         if (Time.timeScale != 0)
         {
+            if (agent.enabled == false)
+            {
+                if (GameManager.gm.GetGameMode() != GameManager.Mode.MainMenu)
+                {
+                    agent.enabled = true;
+                }
+            }
             Intelligence();
 
             if (healthPoints <= 0)
@@ -75,6 +80,22 @@ public class Enemy : MonoBehaviour
         {
             if (Vector3.Distance(target.transform.position, transform.position) > 3)
             {
+                attackCD = 0; //stops the run punching
+                if (canMove)
+                {
+                    if (agent.isOnNavMesh)
+                    {
+                        agent.isStopped = false;
+                    }
+                }
+                else
+                {
+                    if (agent.isOnNavMesh)
+                    {
+                        agent.isStopped = true;
+                    }
+                }
+
                 if (agent.isOnNavMesh)
                 {
 
@@ -110,17 +131,6 @@ public class Enemy : MonoBehaviour
                 else
                 {
                     attackCD += Time.deltaTime;
-                }
-            }
-            if(canMove && agent.isOnNavMesh)
-            {
-                agent.isStopped = false;
-            }
-            else
-            {
-                if (agent.isOnNavMesh)
-                {
-                    agent.isStopped = true;
                 }
             }
         }
@@ -168,11 +178,6 @@ public class Enemy : MonoBehaviour
     {
         target.AlterHealth(-dmg);
         attackCD = 0.0f;
-    }
-
-    public void SetEnemyManager(EnemyManager em)
-    {
-        EM = em;
     }
 
     public void AlterHealth(int amount)

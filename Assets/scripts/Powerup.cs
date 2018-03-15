@@ -32,7 +32,7 @@ public class Powerup : MonoBehaviour
     private Type Power;
     private float aChance;
     private float sChance;
-    private float gChance;
+    //private float gChance;
     #endregion
 
     #region Enumerators
@@ -51,7 +51,7 @@ public class Powerup : MonoBehaviour
         //takes the public variables and turns them into a standard percentage value
         aChance = ((relativeAmmoChance / (relativeAmmoChance + relativeSuppliesChance + relativeGunChance ))*100);
         sChance = ((relativeSuppliesChance / (relativeAmmoChance + relativeSuppliesChance + relativeGunChance)) * 100);
-        gChance = ((relativeGunChance / (relativeAmmoChance + relativeSuppliesChance + relativeGunChance)) * 100);
+        //gChance = ((relativeGunChance / (relativeAmmoChance + relativeSuppliesChance + relativeGunChance)) * 100); //unnecessary?
 
         int r = Random.Range(1, 100);
         if (r <= aChance)

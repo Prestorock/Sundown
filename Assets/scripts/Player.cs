@@ -16,20 +16,30 @@ Description: A top down player controller. Should have capability to pick up ite
 public class Player : MonoBehaviour
 {
     #region Public Variables
-    public int maxHealth = 100;
-    public float speed = 0.1f;
+    
     public GameObject modelObject;
     //public GameObject bullet; //weapon should change bullets
     public GameObject gunAttach;
     public GameObject stashAttach;
     public SelectionTarget SelectCollider;
+    public AudioClip hurtSound;
     [HideInInspector]
     public bool canMove = true;
     [HideInInspector]
     public bool canAttack = true;
+
     #endregion
 
     #region Private Variables
+    [SerializeField]
+    [Range(0,1)]
+    private float attackSpeed = 1.0f;
+    private float attackTimer = 0.0f;
+    [SerializeField]
+    private int punchingDamage = 5;
+    private int maxHealth = 100;
+    [SerializeField]
+    private float speed = 0.1f;
     private TDCamera maincam;
     private int healthPoints;
     private GameObject targetObj = null;
@@ -40,11 +50,9 @@ public class Player : MonoBehaviour
     private bool buildingMode = false;
     private Building building;
     private bool isAlive = true;
-    private float punchingSpeed = 1.0f;
-    private int punchingDamage = 5;
 
-    public int ammo { get; private set; }
-    public int supplies { get; private set; }
+    public int Ammo { get; private set; }
+    public int Supplies { get; private set; }
     #endregion
 
     #region Unity Methods
@@ -69,6 +77,10 @@ public class Player : MonoBehaviour
 
         if (Time.timeScale != 0)
         {
+            if(attackTimer < attackSpeed)
+            {
+                attackTimer += Time.deltaTime;
+            }
             /*********************************************************
             ANYTHING IN THIS STATEMENT WILL ADHERE TO PAUSING
             **********************************************************/
@@ -95,7 +107,7 @@ public class Player : MonoBehaviour
         canMove = false;
         canAttack = false;
         isAlive = false;
-        GameManager.gm.playerDeath();
+        GameManager.gm.PlayerDeath();
     }
     public int GetHealth()
     {
@@ -105,18 +117,22 @@ public class Player : MonoBehaviour
     public void AlterHealth(int amount)
     {
         healthPoints = Mathf.Clamp(healthPoints += amount, 0, maxHealth);
+        if(amount < 0)
+        {
+            AudioSource.PlayClipAtPoint(hurtSound, transform.position);
+        }
 
     }
     public void AlterAmmo(int amount)
     {
-        ammo += amount;
-        GameManager.gm.ammoText.text = ammo.ToString();
+        Ammo += amount;
+        GameManager.gm.ammoText.text = Ammo.ToString();
     }
 
     public void AlterSupplies(int amount)
     {
-        supplies += amount;
-        GameManager.gm.supplyText.text = supplies.ToString();
+        Supplies += amount;
+        GameManager.gm.supplyText.text = Supplies.ToString();
     }
 
     private void AntiPauseActions()
@@ -137,7 +153,7 @@ public class Player : MonoBehaviour
 
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Camera.main.WorldToScreenPoint(maincam.middlePosition));
-        if (Physics.Raycast(ray, out hit)) //NOTE: Building ray needs to ignore all layers but the floor and the player 
+        if (Physics.Raycast(ray, out hit, LayerMask.GetMask("floor"))) //NOTE: Building ray needs to ignore all layers but the floor and the player 
                                            //(the player just stops from building on yourself. Not a bug, a feature. :D)
         {
             BuildableFloor floor = hit.transform.GetComponent<BuildableFloor>();
@@ -161,7 +177,7 @@ public class Player : MonoBehaviour
                 }
                 if (closestObject)
                 {
-                    building.GiveBuildLocation(closestObject, floor);
+                    building.GiveBuildLocation(closestObject);
                 }
             }
             else
@@ -224,6 +240,7 @@ public class Player : MonoBehaviour
                     if (stashedWeapon)//Held obj, a target, and a stashed weapon
                     {
                         DropItem(heldObj);
+                        PickUpItem(targetObj);
                     }
                     else//Held obj, a target, and no stashed weapon
                     {
@@ -415,31 +432,33 @@ public class Player : MonoBehaviour
         }
         else
         {
-            RaycastHit hit;
-            Ray ray = new Ray(gunAttach.transform.position, gunAttach.transform.forward);
-            if (Physics.Raycast(ray, out hit, 3.0f))
+            if (attackTimer > attackSpeed)
             {
-                Debug.DrawLine(gunAttach.transform.position, hit.point, Color.green, 5.0f);
-                if(hit.transform.gameObject.GetComponent<Enemy>())
+                RaycastHit hit;
+                Ray ray = new Ray(gunAttach.transform.position, gunAttach.transform.forward);
+                if (Physics.Raycast(ray, out hit, 3.0f))
                 {
-                    hit.transform.gameObject.GetComponent<Enemy>().AlterHealth(-punchingDamage);
-                    //Vector3 dir = hit.transform.position - transform.position;
-                    //dir = -dir.normalized;
-                    //hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(dir * 100);
-                    Debug.Log("punched " + hit.transform.gameObject.name);
+                    //Debug.DrawLine(gunAttach.transform.position, hit.point, Color.green, 5.0f);
+                    if (hit.transform.gameObject.GetComponent<Enemy>())
+                    {
+                        hit.transform.gameObject.GetComponent<Enemy>().AlterHealth(-punchingDamage);
+                        //Vector3 dir = hit.transform.position - transform.position;
+                        //dir = -dir.normalized;
+                        //hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(dir * 100);
+                        Debug.Log("punched " + hit.transform.gameObject.name);
+                    }
                 }
-            }
-            else
-            {
-                Debug.DrawRay(gunAttach.transform.position, gunAttach.transform.forward*3.0f, Color.red, 5.0f);
+                else
+                {
+                    //Debug.DrawRay(gunAttach.transform.position, gunAttach.transform.forward*3.0f, Color.red, 5.0f);
 
+                }
             }
         }
     }
 
     private void PlaceBuilding(Building toBeBuilt)
     {
-        Vector3 buildLocation = new Vector3(maincam.middlePosition.x, GameManager.gm.GetFloorHeight(), maincam.middlePosition.z);
         if (toBeBuilt.Build() == true)
         {
             building.held = false;

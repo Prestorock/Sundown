@@ -28,7 +28,6 @@ public class Building : MonoBehaviour
     #region Private Variables
     private bool buildable;
     private Transform attachTo;
-    private BuildableFloor floor;
     private Outline oline;
     private Material mat;
     private Color matColor;
@@ -111,12 +110,11 @@ public class Building : MonoBehaviour
 
     }
 
-    public void GiveBuildLocation(GameObject attach, BuildableFloor flo)
+    public void GiveBuildLocation(GameObject attach)
     {
         if (attach != null)
         {
             attachTo = attach.transform;
-            floor = flo;
         }
         else
         {
@@ -134,6 +132,10 @@ public class Building : MonoBehaviour
             if (gameObject.GetComponent<Collider>())
             {
                 gameObject.GetComponent<Collider>().isTrigger = false;
+            }
+            if(gameObject.GetComponent<UnityEngine.AI.NavMeshObstacle>())
+            {
+                gameObject.GetComponent<UnityEngine.AI.NavMeshObstacle>().carving = true;
             }
             GetComponent<Renderer>().material = mat;
             GetComponent<Renderer>().material.color = matColor;

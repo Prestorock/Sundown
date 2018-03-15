@@ -200,11 +200,13 @@ MonoBehaviour:
   isGun: 1
   damage: 1
   fireRate: 1
-  projectiles: 11
+  projectiles: 1
   bullet: {fileID: 1607220627184286, guid: 599eb76ccc27b7a4891a52f69be7d7c2, type: 2}
   bulletSpawn: {fileID: 4817958671944552}
   gunMeshes:
   - {fileID: 4300006, guid: ca47a1cfe6ebeb141a19e4a7685c0324, type: 3}
   - {fileID: 4300000, guid: 1da387bb28335c943a3153f42c10eef6, type: 3}
   - {fileID: 4300000, guid: 5bf1502e36b08b94ea0bef8e6ed3ccf9, type: 3}
+  shotSound: {fileID: 8300000, guid: 296e65f84ea227e40bcadeb142228de1, type: 3}
+  reloadSound: {fileID: 8300000, guid: 335e6cb12c9eca748964b0b9aab413ac, type: 3}
   FiringMode: 2
