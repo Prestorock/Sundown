@@ -194,7 +194,7 @@ public class GameManager : MonoBehaviour
 
             while (mainCamera.GetComponent<TDCamera>().stillFading)
             {
-                //print("fading out");
+                //print("fading in");
                 yield return null;
             }
             mainMenu.SetActive(true);
@@ -226,6 +226,10 @@ public class GameManager : MonoBehaviour
             menuCamera.SetActive(false);
             mainMenu.SetActive(false);
             Cleanup();
+            if (gameFullyInitialized == false)
+            {
+                Destroy(GameObject.FindGameObjectWithTag("enemy"));
+            }
             DestroyFloor();
             CollectPlayer();
 
@@ -245,7 +249,7 @@ public class GameManager : MonoBehaviour
                 yield return null;
             }
 
-            modeTimer = 0;
+            modeTimer = 0; //actually set timer
             gameFullyInitialized = true;
         }
     }

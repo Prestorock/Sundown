@@ -32,10 +32,6 @@ public class EnemyManager : MonoBehaviour
     #region Unity Methods
     private void Update()
     {
-        if (Enemies[0] == null)
-        {
-            Enemies[0] = GameObject.FindGameObjectWithTag("enemy");
-        }
     }
     #endregion
 
