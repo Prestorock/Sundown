@@ -15,10 +15,11 @@ Description:
 public class SpawnArea : MonoBehaviour
 {
     #region Public Variables
+    public GameObject[] quadPoints = new GameObject[4];
     #endregion
 
     #region Private Variables
-    public GameObject[] quadPoints = new GameObject[4];
+    Color testcolor;
     #endregion
 
     #region Enumerations
@@ -40,14 +41,15 @@ public class SpawnArea : MonoBehaviour
             quadPoints[3].transform.position.z
             );
 
-        Gizmos.color = Color.white;
+        Gizmos.color = Color.cyan;
 
         Gizmos.DrawLine(quadPoints[0].transform.position, temp1);
         Gizmos.DrawLine(temp1, quadPoints[2].transform.position);
         Gizmos.DrawLine(quadPoints[2].transform.position, temp3);
         Gizmos.DrawLine(temp3, quadPoints[0].transform.position);
 
-        Gizmos.color = Color.cyan;
+        Gizmos.color = Color.white;
+         
         for (int i = 0; i < 4; i++)
         {
             Gizmos.DrawWireSphere(quadPoints[i].transform.position, 1.0f);

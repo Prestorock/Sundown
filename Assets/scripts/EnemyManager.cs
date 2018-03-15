@@ -12,25 +12,47 @@ Description:
 
 ===================================*/
 
-public class EnemyManager : MonoBehaviour 
+public class EnemyManager : MonoBehaviour
 {
-	#region Public Variables
-	
-	#endregion
-	
-	#region Private Variables
-	
-	#endregion
-	
-	#region Enumerations
-	
-	#endregion
+    #region Public Variables
+    public SpawnArea SpawnArea;
+    public GameObject EnemyToSpawn;
+    [HideInInspector]
+    public int upkeep = 0;
+    #endregion
 
-	#region Unity Methods
-	
-	#endregion
-	
-	#region Custom Methods
-	
-	#endregion
+    #region Private Variables
+    private GameObject[] Enemies = new GameObject[40];
+    #endregion
+
+    #region Enumerations
+
+    #endregion
+
+    #region Unity Methods
+    private void Update()
+    {
+        if (Enemies[0] == null)
+        {
+            Enemies[0] = GameObject.FindGameObjectWithTag("enemy");
+        }
+    }
+    #endregion
+
+    #region Custom Methods
+    public void SpawnEnemy()
+    {
+        Vector3 spawnpoint = SpawnArea.RandomPoint();
+        GameObject temp = Instantiate(EnemyToSpawn, spawnpoint, EnemyToSpawn.transform.rotation, this.gameObject.transform);
+        Enemies[Enemies.Length] = temp;
+    }
+
+    public void CleanupEnemies()
+    {
+        foreach (GameObject enemy in Enemies)
+        {
+            Destroy(enemy);
+        }
+    }
+    #endregion
 }

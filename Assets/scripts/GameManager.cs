@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 /*===================================
 Project:	Sundown Survival	
@@ -27,7 +28,7 @@ public class GameManager : MonoBehaviour
     public GameObject storeObjectGroup;
 
     [Header("Children")]
-    public EnemyManager EnemyManager;
+    public EnemyManager EM;
     public GameObject mainCamera;
     public GameObject menuCamera;
     public GameObject mainMenu;
@@ -134,8 +135,9 @@ public class GameManager : MonoBehaviour
     }
     public void QuitToMenu()
     {
-        StartCoroutine(ChangeGameMode(Mode.MainMenu));
+        SceneManager.LoadScene(0, LoadSceneMode.Single);
         playing = false;
+        Time.timeScale = 1;
     }
 
     public void QuitGame()
@@ -563,6 +565,7 @@ public class GameManager : MonoBehaviour
     }
     private void Cleanup()
     {
+        EM.CleanupEnemies();
         Destroy(PowerupParent);
         if (GameMode == Mode.Survive)
         {

@@ -568,7 +568,6 @@ GameObject:
   - component: {fileID: 4587612914798852}
   - component: {fileID: 20091734909415386}
   - component: {fileID: 124908918374511240}
-  - component: {fileID: 81834174730501278}
   m_Layer: 5
   m_Name: MainMenuCamera
   m_TagString: MainCamera
@@ -1087,13 +1086,6 @@ AudioListener:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1282093210166090}
-  m_Enabled: 1
---- !u!81 &81834174730501278
-AudioListener:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1677657008627548}
   m_Enabled: 1
 --- !u!114 &114012494466251028
 MonoBehaviour:
@@ -2382,6 +2374,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06be3039fd7571a4ab268d82c2f4d572, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SpawnArea: {fileID: 114525389487821470}
+  EnemyToSpawn: {fileID: 1171652317502940, guid: 8f11c9ba38bc1b041b1b2b4587c797b7,
+    type: 2}
+  upkeep: 0
 --- !u!114 &114848267987863848
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2397,7 +2393,7 @@ MonoBehaviour:
   scavengeSpawn: {fileID: 0}
   baseParent: {fileID: 0}
   storeObjectGroup: {fileID: 0}
-  EnemyManager: {fileID: 114781940459417234}
+  EM: {fileID: 114781940459417234}
   mainCamera: {fileID: 1282093210166090}
   menuCamera: {fileID: 1677657008627548}
   mainMenu: {fileID: 1227007177093524}

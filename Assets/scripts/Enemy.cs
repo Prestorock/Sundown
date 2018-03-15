@@ -29,6 +29,7 @@ public class Enemy : MonoBehaviour
     private GameObject target = null;
     private GameObject secondaryTarget = null;
     private float attackCD = 0.0f;
+    private EnemyManager EM;
     #endregion
 
     #region Enumerations
@@ -153,6 +154,11 @@ public class Enemy : MonoBehaviour
     {
         target.AlterHealth(-dmg);
         attackCD = 0.0f;
+    }
+
+    public void SetEnemyManager(EnemyManager em)
+    {
+        EM = em;
     }
     #endregion
 }
