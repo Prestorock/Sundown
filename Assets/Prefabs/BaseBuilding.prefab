@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 4859952930832760}
   - component: {fileID: 54857273317045374}
   m_Layer: 0
-  m_Name: TestBuilding
+  m_Name: BaseBuilding
   m_TagString: Untagged
   m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -157,6 +157,7 @@ MonoBehaviour:
   BuildingCheckMaterial: {fileID: 2100000, guid: 47e40c84faa4e9d4b8c044a894a2bea3,
     type: 2}
   maxHealth: 100
+  built: 0
 --- !u!114 &114324947464963550
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -59,7 +59,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: e8401a270e6515d44ad3688643a1d48f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -112,7 +112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45b2cf57e9d033644bd31523da204793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spinSpeed: 1
+  spinSpeed: 0.5
   spinDir: 1
 --- !u!114 &114258488951588588
 MonoBehaviour:
@@ -125,11 +125,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbb62a007ffcfc74bbc8637274189326, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  relativeAmmoChance: 92.7
-  relativeSuppliesChance: 34.6
-  relativeGunChance: 7.4
+  relativeAmmoChance: 75
+  relativeSuppliesChance: 75
+  relativeGunChance: 25
   baseGunPrefab: {fileID: 1791912386194734, guid: 16769d12fecd1044eb94977f35ba0a94,
     type: 2}
+  ammoMesh: {fileID: 4300000, guid: 329eb99f3634a014086e4733a2b3adad, type: 3}
+  supplyMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!135 &135884168128831230
 SphereCollider:
   m_ObjectHideFlags: 1

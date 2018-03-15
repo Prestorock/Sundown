@@ -56,11 +56,11 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if(maincam == null)
+        if (maincam == null)
         {
             maincam = GameManager.gm.mainCamera.GetComponent<TDCamera>();
         }
-        if (healthPoints <= 0)
+        if (healthPoints <= 0 && isAlive)
         {
             Death();
         }
@@ -91,11 +91,11 @@ public class Player : MonoBehaviour
     #region Custom Methods
     private void Death()
     {
-        Debug.Log("Player Death");
+        //Debug.Log("Player Death");
         canMove = false;
         canAttack = false;
         isAlive = false;
-        GameManager.gm.ChangeGameMode(GameManager.Mode.MainMenu);
+        GameManager.gm.playerDeath();
     }
     public int GetHealth()
     {
@@ -140,7 +140,7 @@ public class Player : MonoBehaviour
         if (Physics.Raycast(ray, out hit)) //NOTE: Building ray needs to ignore all layers but the floor and the player 
                                            //(the player just stops from building on yourself. Not a bug, a feature. :D)
         {
-                BuildableFloor floor = hit.transform.GetComponent<BuildableFloor>();
+            BuildableFloor floor = hit.transform.GetComponent<BuildableFloor>();
             if (floor)
             {
 
@@ -196,6 +196,10 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.B) && GameManager.gm.GetGameMode() == GameManager.Mode.Survive)
         {
+            if(buildingMode)
+            {
+                building.held = false;
+            }
             GameManager.gm.ToggleBuildMenu();
         }
 
@@ -267,10 +271,10 @@ public class Player : MonoBehaviour
                 PlaceBuilding(building);
             }
         }
-        if(Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0))
         {
-            if(heldObj)
-            weaponscript.TriggerHeld(false);
+            if (heldObj)
+                weaponscript.TriggerHeld(false);
         }
 
         if (Input.GetMouseButtonDown(1))
@@ -411,7 +415,25 @@ public class Player : MonoBehaviour
         }
         else
         {
-            //TODO: implement punching
+            RaycastHit hit;
+            Ray ray = new Ray(gunAttach.transform.position, gunAttach.transform.forward);
+            if (Physics.Raycast(ray, out hit, 3.0f))
+            {
+                Debug.DrawLine(gunAttach.transform.position, hit.point, Color.green, 5.0f);
+                if(hit.transform.gameObject.GetComponent<Enemy>())
+                {
+                    hit.transform.gameObject.GetComponent<Enemy>().AlterHealth(-punchingDamage);
+                    //Vector3 dir = hit.transform.position - transform.position;
+                    //dir = -dir.normalized;
+                    //hit.transform.gameObject.GetComponent<Rigidbody>().AddForce(dir * 100);
+                    Debug.Log("punched " + hit.transform.gameObject.name);
+                }
+            }
+            else
+            {
+                Debug.DrawRay(gunAttach.transform.position, gunAttach.transform.forward*3.0f, Color.red, 5.0f);
+
+            }
         }
     }
 
@@ -420,11 +442,13 @@ public class Player : MonoBehaviour
         Vector3 buildLocation = new Vector3(maincam.middlePosition.x, GameManager.gm.GetFloorHeight(), maincam.middlePosition.z);
         if (toBeBuilt.Build() == true)
         {
+            building.held = false;
             buildingMode = false;
             building = null;
         }
         else
         {
+            building.held = true;
             buildingMode = true;
             building = toBeBuilt;
         }
@@ -437,6 +461,7 @@ public class Player : MonoBehaviour
         Vector3 buildLocation = new Vector3(maincam.middlePosition.x, GameManager.gm.GetFloorHeight(), maincam.middlePosition.z);
         GameObject temp = Instantiate(toBeBuilt, buildLocation, toBeBuilt.transform.rotation);
         building = temp.GetComponentInChildren<Building>();
+        building.held = true;
 
         GameManager.gm.ToggleBuildMenu();
     }

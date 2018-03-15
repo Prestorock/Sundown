@@ -13,17 +13,20 @@ Description:
 
 ===================================*/
 
-public class Building : MonoBehaviour 
+public class Building : MonoBehaviour
 {
     #region Public Variables
     //public GameObject modelObject;
     public Material BuildingCheckMaterial;
     public int maxHealth = 100;
-	#endregion
-	
-	#region Private Variables
+    [HideInInspector]
+    public bool built;
+    [HideInInspector]
+    public bool held = false;
+    #endregion
+
+    #region Private Variables
     private bool buildable;
-    private bool built;
     private Transform attachTo;
     private BuildableFloor floor;
     private Outline oline;
@@ -33,7 +36,7 @@ public class Building : MonoBehaviour
     #endregion
 
     #region Unity Methods
-    void Start ()
+    void Start()
     {
         buildable = false;
         built = false;
@@ -46,9 +49,15 @@ public class Building : MonoBehaviour
 
     }
 
-    void Update () {
+    void Update()
+    {
         if (!built)
         {
+            if (!held)
+            {
+                Destroy(this.gameObject);
+            }
+
             if (attachTo)
             {
                 transform.parent.position = attachTo.transform.position;
@@ -57,10 +66,10 @@ public class Building : MonoBehaviour
             {
                 //?
             }
-            if(buildable)
+            if (buildable)
             {
                 oline.color = 1;
-                mat.color = new Color(0,1,0,.2f);
+                mat.color = new Color(0, 1, 0, .2f);
             }
             else
             {
@@ -70,23 +79,23 @@ public class Building : MonoBehaviour
         }
         else
         {
-            if(healthPoints <= 0)
+            if (healthPoints <= 0)
             {
                 Death();
             }
         }
-	}
+    }
     #endregion
     private void OnTriggerExit(Collider other)
     {
-        
+
         buildable = true;
 
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if(buildable && !other.CompareTag("floor") && !other.GetComponent<SelectionTarget>())
+        if (buildable && !other.CompareTag("floor") && !other.GetComponent<SelectionTarget>())
         {
             buildable = false;
         }
@@ -98,7 +107,7 @@ public class Building : MonoBehaviour
     }
     public void AlterHealth(int amount)
     {
-       healthPoints = Mathf.Clamp(healthPoints += amount, 0, maxHealth);
+        healthPoints = Mathf.Clamp(healthPoints += amount, 0, maxHealth);
 
     }
 
@@ -120,7 +129,7 @@ public class Building : MonoBehaviour
     {
         if (buildable)
         {
-            floor.ParentBuilding(gameObject, attachTo.transform);
+            //floor.ParentBuilding(gameObject, attachTo.transform);
             built = true;
             if (gameObject.GetComponent<Collider>())
             {

@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour
     #region Public Variables
     public int maxHealth = 100;
     public int attackDamage = 5;
-    public float attackSpeed = 1.0f;
+    public float attackSpeed = 2.0f;
     #endregion
 
     #region Private Variables
@@ -112,6 +112,17 @@ public class Enemy : MonoBehaviour
                     attackCD += Time.deltaTime;
                 }
             }
+            if(canMove && agent.isOnNavMesh)
+            {
+                agent.isStopped = false;
+            }
+            else
+            {
+                if (agent.isOnNavMesh)
+                {
+                    agent.isStopped = true;
+                }
+            }
         }
         else
         {
@@ -147,9 +158,9 @@ public class Enemy : MonoBehaviour
     private void Attack(int dmg, Player target)
     {
         target.AlterHealth(-dmg);
-        Vector3 dir = target.transform.position - transform.position;
-        dir = -dir.normalized;
-        target.GetComponent<Rigidbody>().AddForce(dir*dmg);
+        //Vector3 dir = target.transform.position - transform.position;
+        //dir = -dir.normalized;
+        //target.GetComponent<Rigidbody>().AddForce(dir*dmg);
         attackCD = 0.0f;
     }
 

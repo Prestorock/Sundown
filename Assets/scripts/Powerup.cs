@@ -101,12 +101,12 @@ public class Powerup : MonoBehaviour
         }
         else if (Power == Type.Ammo)
         {
-            p.AlterAmmo(Random.Range(1,3));
+            p.AlterAmmo(Random.Range(1,5));
             //Debug.Log("ammo: "+ p.ammo);
         }
         else if (Power == Type.Supplies)
         {
-            p.AlterSupplies(1);
+            p.AlterSupplies(Random.Range(1, 5));
             //Debug.Log("supplies" + p.supplies);
         }
     }

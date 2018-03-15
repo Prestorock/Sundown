@@ -113,10 +113,15 @@ public class GameManager : MonoBehaviour
 
         Cursor.visible = true;
         //Cursor.lockState = CursorLockMode.Confined;
-        if (GameMode == Mode.Survive || GameMode == Mode.Scavenge) //development mode can be started by setting the mode from the gamemaster object
-                                                                   //this will stop the normal progression of the game like removing the floor and spawning objects;
+        if (GameMode == Mode.Survive) //development mode can be started by setting the mode from the gamemaster object
+                                      //this will stop the normal progression of the game like removing the floor and spawning objects;
+        {
+            StartCoroutine(ChangeGameMode(Mode.Survive));
+        }
+        else if (GameMode == Mode.Scavenge)
         {
             StartCoroutine(ChangeGameMode(Mode.Scavenge));
+
         }
         else if (GameMode == Mode.MainMenu)
         {
@@ -183,25 +188,21 @@ public class GameManager : MonoBehaviour
     }
     private void GenerateNavMesh()
     {
-        if (GameMode != Mode.Scavenge)
-        {
-            floorgrid[0, 0].GetComponent<NavMeshSurface>().RemoveData();
+        storeObjectGroup.transform.parent.GetComponent<NavMeshSurface>().RemoveData();
+        storeObjectGroup.transform.parent.GetComponent<NavMeshSurface>().BuildNavMesh();
 
-            floorgrid[0, 0].GetComponent<NavMeshSurface>().BuildNavMesh();
-        }
-        else
-        {
-            storeObjectGroup.transform.parent.GetComponent<NavMeshSurface>().RemoveData();
-            storeObjectGroup.transform.parent.GetComponent<NavMeshSurface>().BuildNavMesh();
-        }
     }
-    public IEnumerator ChangeGameMode(Mode mode)
+    public void playerDeath()
+    {
+        QuitToMenu();
+    }
+    private IEnumerator ChangeGameMode(Mode mode)
     {
         GameMode = mode;
 
         if (GameMode == Mode.MainMenu)
         {
-            
+
             if (playing)
             {
                 Cleanup();

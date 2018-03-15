@@ -1158,7 +1158,8 @@ MonoBehaviour:
         m_MethodName: SendBuildCommand
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgument: {fileID: 1783401152789890, guid: 4fd42c8fbe4d85b418e8191a01262489,
+            type: 2}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -1394,7 +1395,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: DOES NOTHING
+  m_Text: TOWER BUILDING
 --- !u!114 &114195836846789286
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2412,6 +2413,7 @@ MonoBehaviour:
   SpawnArea: {fileID: 114525389487821470}
   player: {fileID: 0}
   playing: 1
+  spawningEnemies: 0
   GameMode: 3
 --- !u!114 &114872168301083818
 MonoBehaviour:
