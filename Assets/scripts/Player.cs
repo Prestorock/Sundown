@@ -16,7 +16,7 @@ Description: A top down player controller. Should have capability to pick up ite
 public class Player : MonoBehaviour
 {
     #region Public Variables
-    
+
     public GameObject modelObject;
     //public GameObject bullet; //weapon should change bullets
     public GameObject gunAttach;
@@ -25,14 +25,14 @@ public class Player : MonoBehaviour
     public AudioClip hurtSound;
     [HideInInspector]
     public bool canMove = true;
-    //[HideInInspector]
+    [HideInInspector]
     public bool canAttack = true;
 
     #endregion
 
     #region Private Variables
     [SerializeField]
-    [Range(0,1)]
+    [Range(0, 1)]
     private float attackSpeed = 1.0f;
     private float attackTimer = 0.0f;
     [SerializeField]
@@ -77,7 +77,7 @@ public class Player : MonoBehaviour
 
         if (Time.timeScale != 0)
         {
-            if(attackTimer < attackSpeed)
+            if (attackTimer < attackSpeed)
             {
                 attackTimer += Time.deltaTime;
             }
@@ -117,7 +117,7 @@ public class Player : MonoBehaviour
     public void AlterHealth(int amount)
     {
         healthPoints = Mathf.Clamp(healthPoints += amount, 0, maxHealth);
-        if(amount < 0)
+        if (amount < 0)
         {
             AudioSource.PlayClipAtPoint(hurtSound, transform.position);
         }
@@ -148,6 +148,7 @@ public class Player : MonoBehaviour
         canAttack = false;
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.B))
         {
+            canAttack = true;
             buildingMode = false;
             building.held = false;
             building = null;
@@ -156,7 +157,7 @@ public class Player : MonoBehaviour
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Camera.main.WorldToScreenPoint(maincam.middlePosition));
         if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Floor"))) //NOTE: Building ray needs to ignore all layers but the floor and the player 
-                                           //(the player just stops from building on yourself. Not a bug, a feature. :D)
+                                                                       //(the player just stops from building on yourself. Not a bug, a feature. :D)
         {
             BuildableFloor floor = hit.transform.GetComponent<BuildableFloor>();
             if (floor)
@@ -214,9 +215,11 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.B) && GameManager.gm.GetGameMode() == GameManager.Mode.Survive)
         {
-            if(buildingMode)
+            canAttack = false;
+            if (buildingMode)
             {
                 building.held = false;
+                canAttack = true;
             }
             GameManager.gm.ToggleBuildMenu();
         }
@@ -303,6 +306,7 @@ public class Player : MonoBehaviour
                 buildingMode = false;
                 Destroy(building.gameObject);
                 building = null;
+                canAttack = true;
             }
         }
     }
@@ -438,6 +442,7 @@ public class Player : MonoBehaviour
         {
             if (attackTimer > attackSpeed)
             {
+                attackTimer = 0;
                 RaycastHit hit;
                 Ray ray = new Ray(gunAttach.transform.position, gunAttach.transform.forward);
                 if (Physics.Raycast(ray, out hit, 3.0f))
@@ -470,16 +475,22 @@ public class Player : MonoBehaviour
             building.held = false;
             buildingMode = false;
             building = null;
+            Invoke("DelayedAttackBool", 0.2f);
         }
         else
         {
             building.held = true;
             buildingMode = true;
             building = toBeBuilt;
+            canAttack = false;
         }
 
     }
 
+    private void DelayedAttackBool()
+    {
+        canAttack = true;
+    }
     public void StartBuildPlacement(GameObject toBeBuilt)
     {
         if (Supplies >= toBeBuilt.GetComponentInChildren<Building>().cost)
