@@ -109,7 +109,7 @@ public class Weapon : MonoBehaviour
                 colliding = false;
             }
 
-            if(rb.isKinematic == false)
+            if (rb.isKinematic == false)
             {
                 GetComponent<Rigidbody>().isKinematic = true;
             }
@@ -174,6 +174,7 @@ public class Weapon : MonoBehaviour
             if (FiringMode == Rate.Auto)
             {
                 temp = Instantiate(bullet, this.transform.position, this.transform.rotation);
+                GameManager.gm.player.AlterAmmo(-projectiles);
                 temp.GetComponent<Bullet>().SetDamage(damage);
                 rTimer = fireRate;
                 fired = true;
@@ -188,6 +189,7 @@ public class Weapon : MonoBehaviour
                         temp = Instantiate(bullet, this.transform.position, Quaternion.Euler(0, bulletSpawn.transform.rotation.eulerAngles.y + Random.Range(-2.0f, 2.0f), 0));
                         temp.GetComponent<Bullet>().SetDamage(damage);
                     }
+                    GameManager.gm.player.AlterAmmo(-projectiles);
                     rTimer = fireRate;
                     fired = true;
                     AudioSource.PlayClipAtPoint(shotSound, transform.position);
@@ -195,6 +197,7 @@ public class Weapon : MonoBehaviour
                 else
                 {
                     temp = Instantiate(bullet, this.transform.position, this.transform.rotation);
+                    GameManager.gm.player.AlterAmmo(-projectiles);
                     temp.GetComponent<Bullet>().SetDamage(damage);
                     rTimer = fireRate;
                     fired = true;
@@ -218,7 +221,7 @@ public class Weapon : MonoBehaviour
     public void TriggerHeld(bool b)
     {
         triggerHeld = b;
-        if(b == false && FiringMode == Rate.Auto)
+        if (b == false && FiringMode == Rate.Auto)
         {
             AudioSource.PlayClipAtPoint(reloadSound, transform.position);
         }

@@ -19,6 +19,7 @@ public class Building : MonoBehaviour
     //public GameObject modelObject;
     public Material BuildingCheckMaterial;
     public int maxHealth = 100;
+    public int cost;
     [HideInInspector]
     public bool built;
     [HideInInspector]

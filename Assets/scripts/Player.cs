@@ -25,7 +25,7 @@ public class Player : MonoBehaviour
     public AudioClip hurtSound;
     [HideInInspector]
     public bool canMove = true;
-    [HideInInspector]
+    //[HideInInspector]
     public bool canAttack = true;
 
     #endregion
@@ -423,7 +423,7 @@ public class Player : MonoBehaviour
         {
             if (weapon.CompareTag("gun") == true)
             {
-                if (!buildingMode)
+                if (!buildingMode && Ammo > 0)
                 {
                     weaponscript.Shoot();
                 }
@@ -463,8 +463,10 @@ public class Player : MonoBehaviour
 
     private void PlaceBuilding(Building toBeBuilt)
     {
+        building = toBeBuilt;
         if (toBeBuilt.Build() == true)
         {
+            AlterSupplies(-building.cost);
             building.held = false;
             buildingMode = false;
             building = null;
@@ -480,13 +482,21 @@ public class Player : MonoBehaviour
 
     public void StartBuildPlacement(GameObject toBeBuilt)
     {
-        buildingMode = true;
-        Vector3 buildLocation = new Vector3(maincam.middlePosition.x, GameManager.gm.GetFloorHeight(), maincam.middlePosition.z);
-        GameObject temp = Instantiate(toBeBuilt, buildLocation, toBeBuilt.transform.rotation);
-        building = temp.GetComponentInChildren<Building>();
-        building.held = true;
+        if (Supplies >= toBeBuilt.GetComponentInChildren<Building>().cost)
+        {
+            buildingMode = true;
+            Vector3 buildLocation = new Vector3(maincam.middlePosition.x, GameManager.gm.GetFloorHeight(), maincam.middlePosition.z);
+            GameObject temp = Instantiate(toBeBuilt, buildLocation, toBeBuilt.transform.rotation);
+            building = temp.GetComponentInChildren<Building>();
+            building.held = true;
 
-        GameManager.gm.ToggleBuildMenu();
+            GameManager.gm.ToggleBuildMenu();
+
+        }
+        else
+        {
+            return;
+        }
     }
 
     #endregion
