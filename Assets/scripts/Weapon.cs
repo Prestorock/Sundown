@@ -99,11 +99,20 @@ public class Weapon : MonoBehaviour
 
     private void Update()
     {
-        if (isHeld && colliding == true)
+
+        if (isHeld)
         {
-            GetComponent<AutoSpin>().enabled = false;
-            col.enabled = false;
-            colliding = false;
+            if (colliding == true)
+            {
+                GetComponent<AutoSpin>().enabled = false;
+                col.enabled = false;
+                colliding = false;
+            }
+
+            if(rb.isKinematic == false)
+            {
+                GetComponent<Rigidbody>().isKinematic = true;
+            }
         }
         else if (!isHeld && colliding == false)
         {
